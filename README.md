@@ -75,6 +75,12 @@ Once you have the types file, make sure you set your [`package.json#exports`](#s
 
 </details>
 
+## TODO: Externalize common libraries (React, Vue, etc.)
+
+## TODO: talk about targeted browsers
+
+Link to https://web.dev/publish-modern-javascript/#configure-babel-loader-to-transpile-nodemodules
+
 ## `package.json` settings
 
 There's a lot of important things to talk about in `package.json`, so let's break it down further:
@@ -262,7 +268,7 @@ See [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-file-as-
 
 ## Open questions
 
-- I'm still unsure on if things like JSX should be transpiled or not for your library, or if you should leave it to the developer's bundler to do so (excluding `umd` bundles, which I believe should be transpiled... I think :D )
+- I'm still unsure on if things like JSX should be transpiled or not for your library, or if you should leave it to the developer's bundler to do so (excluding `umd` bundles meant for direct browser consumption, which should be transpiled)
 
 ## Contributing
 
