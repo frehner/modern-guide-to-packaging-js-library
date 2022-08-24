@@ -75,11 +75,32 @@ Once you have the types file, make sure you set your [`package.json#exports`](#s
 
 </details>
 
-## TODO: Externalize common libraries (React, Vue, etc.)
+## Externalize frameworks
 
-## TODO: talk about targeted browsers
+<details>
+<summary>Don't include a copy of React, Vue, etc. in your bundle</summary>
 
-Link to https://web.dev/publish-modern-javascript/#configure-babel-loader-to-transpile-nodemodules
+When building a library that relies on a framework (such as React, Vue, etc.), you'll want to add the framework to your bundler's "externals" (or equivalent) configuration, which makes it so that your library will reference the framework but will not include it in the bundle. This will prevent bugs and also reduce the size of your library's package.
+
+You should also add the framework to your library's `package.json`'s [peer dependencies](#set-your-peerdependencies) to indicate to developers that you rely on that framework.
+
+</details>
+
+## Target modern browsers
+
+<details>
+<summary>Use modern features and let devs choose to support older browsers if they need to</summary>
+
+[This article on web.dev](https://web.dev/publish-modern-javascript/) makes a great case for your library to target modern features, and offers guidelines on how to:
+
+- Enable developers to support older browsers when using your library
+- Output multiple bundles that support various levels of browser support
+
+</details>
+
+## Transpile if necessary
+
+TODO
 
 ## `package.json` settings
 
@@ -95,7 +116,7 @@ The `exports` field on `package.json` is an incredibly useful addition, though i
 1. Defines what can and cannot be imported from your library, and what the name of it is. If it's not listed in `exports`, then developers cannot `import`/`require` it.
 2. Allows you to change which file is imported based on conditions you define, such as "Was the file `import`ed or `require`d? Do they want a `development` or `production` version of my library?" etc.
 
-There are some good docs from the [NodeJS team](https://nodejs.org/api/packages.html#package-entry-points) and the [Webpack team](https://webpack.js.org/guides/package-exports/) on the possibilities here. If at all possible, try to have at least a format similar to the following:
+There are some good docs from the [NodeJS team](https://nodejs.org/api/packages.html#package-entry-points) and the [Webpack team](https://webpack.js.org/guides/package-exports/) on the possibilities here. Here is an example that covers some common use-cases:
 
 ```json
 {
@@ -106,18 +127,19 @@ There are some good docs from the [NodeJS team](https://nodejs.org/api/packages.
       "import": "index.js",
       "require": "index.cjs",
       "default": "index.js"
-    }
+    },
+    "./package.json": "./package.json"
   }
 }
 ```
 
 Import things to know about the `exports` field:
 
-- `"."` indicates the default entry for your package. You can additionally have named things like `"./package.json": "./package.json"` or even folders and wildcards like `"./*": "./dist/*"`
-- The resolution happens from **top to bottom** and stops as soon as a matching field is found; if you have a more specific field but it is lower in the order, then it won't get matched! Because of that, the order of entries is very important.
+- `"."` indicates the default entry for your package.
+- The resolution happens from **top to bottom** and stops as soon as a matching field is found; the order of entries is very important.
 - `types` should always come first, and helps TypeScript find the types file
 - `default` should always be last, and is meant as a fallback
-- The `module` field is an "unofficial" field that is supported by bundlers like Webpack and Rollup, with the goal of de-deplicating your library when it is both `require`-d and `import`-ed by a developer and/or a developer's dependencies. It should come before `import` and `require`, and point to an `esm`-only bundle - which can be the same as your original `esm` bundle if it's purely `esm`. For a deeper dive, read more [here](https://github.com/webpack/webpack/issues/11014#issuecomment-641550630), [here](https://github.com/webpack/webpack/issues/11014#issuecomment-643256943), and [here](https://github.com/rollup/plugins/pull/540#issuecomment-692078443).
+- The `module` field is an "unofficial" field that is supported by bundlers like Webpack and Rollup. It should come before `import` and `require`, and point to an `esm`-only bundle - which can be the same as your original `esm` bundle if it's purely `esm`. For a deeper dive, read more [here](https://github.com/webpack/webpack/issues/11014#issuecomment-641550630), [here](https://github.com/webpack/webpack/issues/11014#issuecomment-643256943), and [here](https://github.com/rollup/plugins/pull/540#issuecomment-692078443).
 
 If a bundler or environment understands the `exports` field, then the `package.json`'s top-level `main`, `types`, `module`, and `browser` fields are ignored, as `exports` supersedes those fields.
 
@@ -264,11 +286,27 @@ See [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-file-as-
 
 </details>
 
+### Set your `peerDependencies`
+
+<details>
+<summary>If you rely on a framework, set it as a peer dependency</summary>
+
+As noted in the section on [externalizing frameworks](#externalize-frameworks), if you rely on a framework, you will want to externalize that framework. However, your library will now only work if the developer installs that framework on their own. The way to help them know what you rely on is to set `peerDependencies`. For example, if you were building a React library, it would potentially look like this:
+
+```json
+{
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
+```
+
+Refer to [this article](https://nodejs.org/en/blog/npm/peer-dependencies/) for more details.
+
+</details>
+
 ---
-
-## Open questions
-
-- I'm still unsure on if things like JSX should be transpiled or not for your library, or if you should leave it to the developer's bundler to do so (excluding `umd` bundles meant for direct browser consumption, which should be transpiled)
 
 ## Contributing
 
