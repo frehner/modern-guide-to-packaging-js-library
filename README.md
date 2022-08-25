@@ -95,6 +95,7 @@ You should also add the framework to your library's `package.json`'s [peer depen
 
 - Enable developers to support older browsers when using your library
 - Output multiple bundles that support various levels of browser support
+- If you're transpiling from TypeScript for example, set your `"target"` in your `tsconfig.json` to "ESNext".
 
 </details>
 
@@ -111,10 +112,12 @@ There's a lot of important things to talk about in `package.json`, so let's brea
 <details>
 <summary><code>exports</code> define the <i>how</i> and <i>what</i> of what can be imported</summary>
 
-The `exports` field on `package.json` is an incredibly useful addition, though it does add some complexity. The two most important things that it does is:
+The `exports` field on `package.json`, sometimes called "exportmaps", is an incredibly useful addition, though it does add some complexity. The two most important things that it does is:
 
 1. Defines what can and cannot be imported from your library, and what the name of it is. If it's not listed in `exports`, then developers cannot `import`/`require` it.
 2. Allows you to change which file is imported based on conditions you define, such as "Was the file `import`ed or `require`d? Do they want a `development` or `production` version of my library?" etc.
+
+`exports` acts almost like a public API for users of your library and can be useful and showing what files are internal, and what files are public.
 
 There are some good docs from the [NodeJS team](https://nodejs.org/api/packages.html#package-entry-points) and the [Webpack team](https://webpack.js.org/guides/package-exports/) on the possibilities here. Here is an example that covers some common use-cases:
 
@@ -133,7 +136,7 @@ There are some good docs from the [NodeJS team](https://nodejs.org/api/packages.
 }
 ```
 
-Import things to know about the `exports` field:
+Importat things to know about the `exports` field:
 
 - `"."` indicates the default entry for your package.
 - The resolution happens from **top to bottom** and stops as soon as a matching field is found; the order of entries is very important.
@@ -143,7 +146,10 @@ Import things to know about the `exports` field:
 
 If a bundler or environment understands the `exports` field, then the `package.json`'s top-level `main`, `types`, `module`, and `browser` fields are ignored, as `exports` supersedes those fields.
 
-Finally, if you have a "development" and a "production" bundle (e.g. you have warnings in the development bundle that don't exist in the production bundle), then you can also set that up here in the `exports` field. `webpack` will recognize these conditions automatically, and Rollup [can be configured](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions) to recognize them as well.
+If you have a "development" and a "production" bundle (e.g. you have warnings in the development bundle that don't exist in the production bundle), then you can also set that up here in the `exports` field. `webpack` will recognize these conditions automatically, and Rollup [can be configured](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions) to recognize them as well.
+
+Be aware, that not all tools support "exportmaps", be mindful of this when creating export paths and try to have exports mimic their internal file structure,
+or make sure they don't clash with any existing file paths.
 
 </details>
 
@@ -163,6 +169,8 @@ Files can take an array of strings (and those strings can include glob-like synt
   "files": ["dist"]
 }
 ```
+
+Be aware the "files" array doesn't accept a relative specifier. So if you do: `"files": ["./dist"]`, it will not work as expected. 
 
 One great way to ensure you're only including what you need is by running [`npm publish --dry-run`](https://docs.npmjs.com/cli/v8/commands/npm-publish#dry-run), which should list off the files that would be included based on your settings.
 
@@ -303,6 +311,8 @@ As noted in the section on [externalizing frameworks](#externalize-frameworks), 
 ```
 
 Refer to [this article](https://nodejs.org/en/blog/npm/peer-dependencies/) for more details.
+
+Make sure to point out in your package documentation any expected peerDependencies and even provide the dependencies in your `npm install <packages>` documentation of your library. This is import because `npm v3-v6` does not auto install peerDependencies. `npm v7+` does auto install peerDependencies, but sometimes it can help to be a little more explicit that your library is acting like a "plugin", and not a standalone library.
 
 </details>
 
