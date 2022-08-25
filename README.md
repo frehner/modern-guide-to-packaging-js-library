@@ -95,7 +95,8 @@ You should also add the framework to your library's `package.json`'s [peer depen
 
 - Enable developers to support older browsers when using your library
 - Output multiple bundles that support various levels of browser support
-- If you're transpiling from TypeScript for example, set your `"target"` in your `tsconfig.json` to "ESNext".
+
+As one example, if you're transpiling from TypeScript, you should set `"target"` in your `tsconfig.json` to `ESNext`.
 
 </details>
 
@@ -112,12 +113,10 @@ There's a lot of important things to talk about in `package.json`, so let's brea
 <details>
 <summary><code>exports</code> define the <i>how</i> and <i>what</i> of what can be imported</summary>
 
-The `exports` field on `package.json`, sometimes called "exportmaps", is an incredibly useful addition, though it does add some complexity. The two most important things that it does is:
+The `exports` field on `package.json`, sometimes called "export maps", is an incredibly useful addition, though it does add some complexity. The two most important things that it does is:
 
-1. Defines what can and cannot be imported from your library, and what the name of it is. If it's not listed in `exports`, then developers cannot `import`/`require` it.
+1. Defines what can and cannot be imported from your library, and what the name of it is. If it's not listed in `exports`, then developers cannot `import`/`require` it. In other words, it acts like a public API for users of your library and helps define what is public and what is internal.
 2. Allows you to change which file is imported based on conditions you define, such as "Was the file `import`ed or `require`d? Do they want a `development` or `production` version of my library?" etc.
-
-`exports` acts almost like a public API for users of your library and can be useful and showing what files are internal, and what files are public.
 
 There are some good docs from the [NodeJS team](https://nodejs.org/api/packages.html#package-entry-points) and the [Webpack team](https://webpack.js.org/guides/package-exports/) on the possibilities here. Here is an example that covers some common use-cases:
 
@@ -136,7 +135,7 @@ There are some good docs from the [NodeJS team](https://nodejs.org/api/packages.
 }
 ```
 
-Importat things to know about the `exports` field:
+Important things to know about the `exports` field:
 
 - `"."` indicates the default entry for your package.
 - The resolution happens from **top to bottom** and stops as soon as a matching field is found; the order of entries is very important.
@@ -144,12 +143,9 @@ Importat things to know about the `exports` field:
 - `default` should always be last, and is meant as a fallback
 - The `module` field is an "unofficial" field that is supported by bundlers like Webpack and Rollup. It should come before `import` and `require`, and point to an `esm`-only bundle - which can be the same as your original `esm` bundle if it's purely `esm`. For a deeper dive, read more [here](https://github.com/webpack/webpack/issues/11014#issuecomment-641550630), [here](https://github.com/webpack/webpack/issues/11014#issuecomment-643256943), and [here](https://github.com/rollup/plugins/pull/540#issuecomment-692078443).
 
-If a bundler or environment understands the `exports` field, then the `package.json`'s top-level `main`, `types`, `module`, and `browser` fields are ignored, as `exports` supersedes those fields.
+If a bundler or environment understands the `exports` field, then the `package.json`'s top-level [main](#set-the-main-field), [types](#set-the-types-field), [module](#set-the-module-field), and [browser](#set-the-browser-field) fields are ignored, as `exports` supersedes those fields. However, it's still importantant to set those fields, for tools or environments that do not yet understand the `exports` field.
 
 If you have a "development" and a "production" bundle (e.g. you have warnings in the development bundle that don't exist in the production bundle), then you can also set that up here in the `exports` field. `webpack` will recognize these conditions automatically, and Rollup [can be configured](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions) to recognize them as well.
-
-Be aware, that not all tools support "exportmaps", be mindful of this when creating export paths and try to have exports mimic their internal file structure,
-or make sure they don't clash with any existing file paths.
 
 </details>
 
@@ -170,9 +166,9 @@ Files can take an array of strings (and those strings can include glob-like synt
 }
 ```
 
-Be aware the "files" array doesn't accept a relative specifier. So if you do: `"files": ["./dist"]`, it will not work as expected. 
+Be aware that the files array doesn't accept a relative specifier; writing `"files": ["./dist"]` will not work as expected.
 
-One great way to ensure you're only including what you need is by running [`npm publish --dry-run`](https://docs.npmjs.com/cli/v8/commands/npm-publish#dry-run), which should list off the files that would be included based on your settings.
+One great way to verify you have set the files field up correctly is by running [`npm publish --dry-run`](https://docs.npmjs.com/cli/v8/commands/npm-publish#dry-run), which should list off the files that would be included based on your settings.
 
 </details>
 
@@ -297,9 +293,9 @@ See [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-file-as-
 ### Set your `peerDependencies`
 
 <details>
-<summary>If you rely on a framework, set it as a peer dependency</summary>
+<summary>If you rely on another framework or library, set it as a peer dependency</summary>
 
-As noted in the section on [externalizing frameworks](#externalize-frameworks), if you rely on a framework, you will want to externalize that framework. However, your library will now only work if the developer installs that framework on their own. The way to help them know what you rely on is to set `peerDependencies`. For example, if you were building a React library, it would potentially look like this:
+You should [externalize any frameworks](#externalize-frameworks) you rely on. However, in doing so, your library will only work if the developer installs the framework you need on their own. One way to help them know that they need to install the framework is by setting `peerDependencies` - for example, if you were building a React library, it would potentially look like this:
 
 ```json
 {
@@ -312,7 +308,7 @@ As noted in the section on [externalizing frameworks](#externalize-frameworks), 
 
 Refer to [this article](https://nodejs.org/en/blog/npm/peer-dependencies/) for more details.
 
-Make sure to point out in your package documentation any expected peerDependencies and even provide the dependencies in your `npm install <packages>` documentation of your library. This is import because `npm v3-v6` does not auto install peerDependencies. `npm v7+` does auto install peerDependencies, but sometimes it can help to be a little more explicit that your library is acting like a "plugin", and not a standalone library.
+You should also include your reliance on those dependencies and have them in your `npm install <packages>` documentation for your library; `npm v3-v6` does not auto install peerDependencies, while `npm v7+` does auto install peer dependencies. It's also good to be explicit about your package's needs in your documentation.
 
 </details>
 
