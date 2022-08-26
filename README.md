@@ -117,7 +117,31 @@ When transpiling this way, make sure you [create sourcemaps](#create-sourcemaps)
 
 ## `package.json` settings
 
-There are a lot of important settings and fields to talk about in `package.json`, so we are going to break it down further into sections:
+There are a lot of important settings and fields to talk about in `package.json`; I will highlight the most important ones here, but be aware that there are [additional fields](https://docs.npmjs.com/cli/v8/configuring-npm/package-json) that you can set as well.
+
+### Set the `name` field
+
+<details>
+<summary>Give a name to your library</summary>
+
+The `name` field will determine the name of your package on `npm`, and therefore the name that developers will use to install your library.
+
+Note that there are restrictions on what you can name your library, and additionally you can add a "scope" if your library is part of an organization. Refer to the [name docs on npm](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#name) for more details.
+
+The `name` and the [version](#set-the-version-field) fields combine to create a unique identifier for each iteration of your library.
+
+</details>
+
+### Set the `version` field
+
+<details>
+<summary>Publish updates to your library by changing the version</summary>
+
+As noted in the [name](#set-the-name-field) section, the name and the version combine to create a unique identifier for your library on npm. When you make updates to the code in your library, you can then update the `version` field and publish to allow developers to get that new code.
+
+Libraries are encouraged to use a versioning strategy called [semver](https://semver.org/), but note that some libraries choose to [calver](https://calver.org/) or their own unique versioning strategy. Whichever strategy you choose to use, you should document it so that developers understand how your library's versioning works.
+
+</details>
 
 ### Define your `exports`
 
@@ -307,7 +331,7 @@ Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-fil
 
 </details>
 
-### Set your `peerDependencies`
+### List your `peerDependencies`
 
 <details>
 <summary>If you rely on another framework or library, set it as a peer dependency</summary>
