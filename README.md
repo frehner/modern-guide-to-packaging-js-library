@@ -329,11 +329,26 @@ You should also document your reliance on these dependencies; for example, `npm 
 
 </details>
 
-### State which license your library falls under
+### State which `license` your library falls under
 
-TODO:
+<details>
+<summary>Protect yourself and other contributors</summary>
 
-Probably link to https://choosealicense.com/
+> An open source license protects contributors and users. Businesses and savvy developers won’t touch a project without this protection.
+
+That quote comes from [Choose a License](https://choosealicense.com/), which is also a great resource for deciding which license is right for your project.
+
+Once you have decided on a license, the [npm Docs for the license](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#license) describe the format that the license field takes. An example:
+
+```json
+{
+  "license": "MIT"
+}
+```
+
+You can additionally create a `LICENSE.txt` file in the root of your project and copy the license text there.
+
+</details>
 
 ---
 
