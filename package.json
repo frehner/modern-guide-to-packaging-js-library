@@ -1,0 +1,19 @@
+{
+  "name": "modern-guide-to-packaging-js-library",
+  "version": "0.0.1",
+  "description": "Modern Guide to Packaging Your JavaScript Library",
+  "scripts": {
+    "format": "prettier --write .",
+    "format-check": "prettier --check ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frehner/modern-guide-to-packaging-js-library.git"
+  },
+  "author": "Anthony Frehner",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://github.com/frehner/modern-guide-to-packaging-js-library#readme",
+  "devDependencies": {
+    "prettier": "^2.7.1"
+  }
+}
