@@ -115,6 +115,15 @@ When transpiling this way, make sure you [create sourcemaps](#create-sourcemaps)
 
 </details>
 
+## Keep a changelog
+
+<details>
+<summary>Track updates and changes</summary>
+
+It doesn't matter whether it's through automatic tooling or through manual process, as long as developers have a way to see what has changed and how it affects them. Ideally, every change to your library's [version](#set-the-version-field) has a corresponding update in your changelog.
+
+</details>
+
 ## `package.json` settings
 
 There are a lot of important settings and fields to talk about in `package.json`; I will highlight the most important ones here, but be aware that there are [additional fields](https://docs.npmjs.com/cli/v8/configuring-npm/package-json) that you can set as well.
@@ -140,6 +149,8 @@ The `name` and the [version](#set-the-version-field) fields combine to create a 
 As noted in the [name](#set-the-name-field) section, the name and the version combine to create a unique identifier for your library on npm. When you make updates to the code in your library, you can then update the `version` field and publish to allow developers to get that new code.
 
 Libraries are encouraged to use a versioning strategy called [semver](https://semver.org/), but note that some libraries choose to [calver](https://calver.org/) or their own unique versioning strategy. Whichever strategy you choose to use, you should document it so that developers understand how your library's versioning works.
+
+You should also keep track of your changes in a [changelog](#keep-a-changelog).
 
 </details>
 
