@@ -25,7 +25,7 @@ Without getting into the flame wars that generally happen around `esm` and `cjs`
 
 You may have noticed that `umd` is already compatible with CommonJS module loaders - it's up to you if you want to have both a specific `cjs` _and_ `umd` output. In some cases, there's no need to; in other cases, it can be nice to have a pure `cjs` output that keeps the file and folder structure of your source code, and a `umd` output to a single file so it can be easily `<script>`-tagged.
 
-Finally, if your library is stateful, be aware that this does open the possibility of your library running into the [dual package hazard](https://nodejs.org/api/packages.html#dual-package-hazard), which can occur in situations where a developer ends up with both a `cjs` and `esm` version of your library in their application. The "dual package hazard" article describes some ways to mitigate this issue, and the `module` condition in [`package.json#exports`](#set-the-exports-field) can also help prevent this from happening.
+Finally, if your library is stateful, be aware that this does open the possibility of your library running into the [dual package hazard](https://nodejs.org/api/packages.html#dual-package-hazard), which can occur in situations where a developer ends up with both a `cjs` and `esm` version of your library in their application. The "dual package hazard" article describes some ways to mitigate this issue, and the `module` condition in [`package.json#exports`](#define-your-exports) can also help prevent this from happening.
 
 </details>
 
@@ -73,7 +73,7 @@ One option is to continue using JavaScript in your source code and then also sup
 
 Another option is to write the TypeScript type files directly, in an `index.d.ts` file.
 
-Once you have the types file, make sure you set your [`package.json#exports`](#set-the-exports-field) and [`package.json#types`](#set-the-types-field) fields.
+Once you have the types file, make sure you set your [`package.json#exports`](#define-your-exports) and [`package.json#types`](#set-the-types-field) fields.
 
 </details>
 
@@ -303,7 +303,7 @@ Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-fil
 <details>
 <summary><code>main</code> defines the CommonJS entry </summary>
 
-`main` is a fallback for bundlers or environments that don't yet understand [`package.json#exports`](#set-the-exports-field); if a bundler/environment does understand package exports, then `main` is not used.
+`main` is a fallback for bundlers or environments that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `main` is not used.
 
 `main` should point to a CommonJS-compatible bundle; it should probably match the same file as your package export's `require` field.
 
@@ -314,7 +314,7 @@ Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-fil
 <details>
 <summary><code>module</code> defines the ESM entry</summary>
 
-`module` is a fallback for bundlers or environments that don't yet understand [`package.json#exports`](#set-the-exports-field); if a bundler/environment does understand package exports, then `module` is not used.
+`module` is a fallback for bundlers or environments that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `module` is not used.
 
 `module` should point to a ESM-compatible bundle; it should probably match the same file as your package export's `module` and/or `import` field.
 
@@ -325,7 +325,7 @@ Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-fil
 <details>
 <summary><code>browser</code> defines the script-taggable bundle </summary>
 
-`browser` is a fallback for bundlers or environments that don't yet understand [`package.json#exports`](#set-the-exports-field); if a bundler/environment does understand package exports, then `browser` is not used.
+`browser` is a fallback for bundlers or environments that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `browser` is not used.
 
 `browser` should point to the `umd` bundle; it should probably match the same file as your package export's `script` field.
 
@@ -336,7 +336,7 @@ Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-fil
 <details>
 <summary><code>types</code> defines the TypeScript types </summary>
 
-`types` is a fallback for bundlers or environments that don't yet understand [`package.json#exports`](#set-the-exports-field); if a bundler/environment does understand package exports, then `types` is not used.
+`types` is a fallback for bundlers or environments that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `types` is not used.
 
 `types` should point to your TypeScript entry file, such as `index.d.ts`; it should probably match the same file as your package export's `types` field.
 
@@ -381,15 +381,11 @@ Once you have decided on a license, the [npm Docs for the license](https://docs.
 }
 ```
 
-You can additionally create a `LICENSE.txt` file in the root of your project and copy the license text there.
+Additionally, you can create a `LICENSE.txt` file in the root of your project and copy the license text there.
 
 </details>
 
 ---
-
-## Contributing
-
-TODO: add notes about how to contribute here, such as "please provide references or sources for changese you wish to make."
 
 ## Special Thanks
 
