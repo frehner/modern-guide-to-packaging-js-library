@@ -225,7 +225,7 @@ One great way to verify you have set the files field up correctly is by running 
 ### Set the default module `type` for your JS files
 
 <details>
-<summary><code>type</code> dictates which module system your <code>.js`</code> files are using</summary>
+<summary><code>type</code> dictates which module system your <code>.js</code> files use</summary>
 
 With the split the CommonJS and ESM module systems, runtimes and bundlers need a way to determine what type of module system your `.js` files are using. Because CommonJS came first, that is the default - but you can change it by adding `"type": "module"` to your `package.json`, which then means that your `.js` files will be viewed as ESM modules.
 
@@ -235,9 +235,9 @@ Note that you can have a mix of module types in the project, through a couple of
 
 - `.mjs` files will _always_ be ESM modules, even if your `package.json` has `"type": "commonjs"` (or nothing for `type`)
 - `.cjs` files will _always_ be CommonJS modules, even if your `package.json` has `"type": "module"`
-- You add additional `package.json` files that are nested inside of folders; runtimes and bundlers look for the _nearest_ `package.json` and will traverse the folder path upwards until they find it. This means you could have two different folders, both using `.js` files, but each with their own `package.json` set to a different `type` to get both a CommonJS- and ESM-based folder.
+- You can add additional `package.json` files that are nested inside of folders; runtimes and bundlers look for the _nearest_ `package.json` and will traverse the folder path upwards until they find it. This means you could have two different folders, both using `.js` files, but each with their own `package.json` set to a different `type` to get both a CommonJS- and ESM-based folder.
 
-Refer to the excellent NodeJS documentation [here](https://nodejs.org/docs/latest-v18.x/api/packages.html#determining-module-system) and [here](https://nodejs.org/docs/latest-v18.x/api/packages.html#packagejson-and-file-extensions)
+Refer to the excellent NodeJS documentation [here](https://nodejs.org/docs/latest-v18.x/api/packages.html#determining-module-system) and [here](https://nodejs.org/docs/latest-v18.x/api/packages.html#packagejson-and-file-extensions) for more information.
 
 </details>
 
