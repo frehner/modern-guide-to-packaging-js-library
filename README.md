@@ -193,7 +193,7 @@ Let us dive into the meaning of these fields and why I chose this specific shape
 - The `require` field is for when someone `require`s your library
 - `default` should always be last, and is meant as a fallback if nothing else matches
 
-If a bundler or environment understands the `exports` field, then the `package.json`'s top-level [main](#set-the-main-field), [types](#set-the-types-field), [module](#set-the-module-field), and [browser](#set-the-browser-field) fields are ignored, as `exports` supersedes those fields. However, it's still importantant to set those fields, for tools or environments that do not yet understand the `exports` field.
+If a bundler or environment understands the `exports` field, then the `package.json`'s top-level [main](#set-the-main-field), [types](#set-the-types-field), [module](#set-the-module-field), and [browser](#set-the-browser-field) fields are ignored, as `exports` supersedes those fields. However, it's still importantant to set those fields, for tools or runtimes that do not yet understand the `exports` field.
 
 If you have a "development" and a "production" bundle (for example, you have warnings in the development bundle that don't exist in the production bundle), then you can also set them in the `exports` field with `"development"` and `"production"`. `webpack` will recognize these conditions automatically, and Rollup [can be configured](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions) to recognize them as well.
 
@@ -219,6 +219,25 @@ Files can take an array of strings (and those strings can include glob-like synt
 Be aware that the files array doesn't accept a relative specifier; writing `"files": ["./dist"]` will not work as expected.
 
 One great way to verify you have set the files field up correctly is by running [`npm publish --dry-run`](https://docs.npmjs.com/cli/v8/commands/npm-publish#dry-run), which will list off the files that will be included based on this setting.
+
+</details>
+
+### Set the default module `type` for your JS files
+
+<details>
+<summary><code>type</code> dictates which module system your `.js` files are using</summary>
+
+With the split the CommonJS and ESM module systems, runtimes and bundlers need a way to determine what type of module system your `.js` files are using. Because CommonJS came first, that is the default - but you can change it by adding `"type": "module"` to your `package.json`, which then means that your `.js` files will be viewed as ESM modules.
+
+Your options are either `"module"` or `"commonjs"`, and it's highly recommended that you set it to one or the other to explicity declare which one you're using.
+
+Note that you can have a mix of module types in the project, through a couple of tricks:
+
+- `.mjs` files will _always_ be ESM modules, even if your `package.json` has `"type": "commonjs"` (or nothing for `type`)
+- `.cjs` files will _always_ be CommonJS modules, even if your `package.json` has `"type": "module"`
+- You add additional `package.json` files that are nested inside of folders; runtimes and bundlers look for the _nearest_ `package.json` and will traverse the folder path upwards until they find it. This means you could have two different folders, both using `.js` files, but each with their own `package.json` set to a different `type` to get both a CommonJS- and ESM-based folder.
+
+Refer to the excellent NodeJS documentation [here](https://nodejs.org/docs/latest-v18.x/api/packages.html#determining-module-system) and [here](https://nodejs.org/docs/latest-v18.x/api/packages.html#packagejson-and-file-extensions)
 
 </details>
 
@@ -303,7 +322,7 @@ Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-fil
 <details>
 <summary><code>main</code> defines the CommonJS entry </summary>
 
-`main` is a fallback for bundlers or environments that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `main` is not used.
+`main` is a fallback for bundlers or runtimes that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `main` is not used.
 
 `main` should point to a CommonJS-compatible bundle; it should probably match the same file as your package export's `require` field.
 
@@ -314,7 +333,7 @@ Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-fil
 <details>
 <summary><code>module</code> defines the ESM entry</summary>
 
-`module` is a fallback for bundlers or environments that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `module` is not used.
+`module` is a fallback for bundlers or runtimes that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `module` is not used.
 
 `module` should point to a ESM-compatible bundle; it should probably match the same file as your package export's `module` and/or `import` field.
 
@@ -325,7 +344,7 @@ Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-fil
 <details>
 <summary><code>browser</code> defines the script-taggable bundle </summary>
 
-`browser` is a fallback for bundlers or environments that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `browser` is not used.
+`browser` is a fallback for bundlers or runtimes that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `browser` is not used.
 
 `browser` should point to the `umd` bundle; it should probably match the same file as your package export's `script` field.
 
@@ -336,7 +355,7 @@ Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-fil
 <details>
 <summary><code>types</code> defines the TypeScript types </summary>
 
-`types` is a fallback for bundlers or environments that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `types` is not used.
+`types` is a fallback for bundlers or runtimes that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `types` is not used.
 
 `types` should point to your TypeScript entry file, such as `index.d.ts`; it should probably match the same file as your package export's `types` field.
 
@@ -389,4 +408,11 @@ Additionally, you can create a `LICENSE.txt` file in the root of your project an
 
 ## Special Thanks
 
-TODO: List people who have helped proofread and suggest edits.
+A big thank you to the people who took the time out of their busy schedules to review and suggest improvements to the first draft of this document (ordered by last name):
+
+- Kent C. Dodds @kentcdodds
+- Carlos Filoteo @filoxo
+- Jason Miller @developit
+- Konnor Rogers @paramagicdev
+- Matt Seccafien @cartogram
+- Nate Silva @natessilva
