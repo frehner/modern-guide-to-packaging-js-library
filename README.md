@@ -225,7 +225,7 @@ One great way to verify you have set the files field up correctly is by running 
 ### Set the default module `type` for your JS files
 
 <details>
-<summary><code>type</code> dictates which module system your `.js` files are using</summary>
+<summary><code>type</code> dictates which module system your <code>.js`</code> files are using</summary>
 
 With the split the CommonJS and ESM module systems, runtimes and bundlers need a way to determine what type of module system your `.js` files are using. Because CommonJS came first, that is the default - but you can change it by adding `"type": "module"` to your `package.json`, which then means that your `.js` files will be viewed as ESM modules.
 
