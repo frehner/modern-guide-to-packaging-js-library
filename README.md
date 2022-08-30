@@ -411,6 +411,7 @@ Additionally, you can create a `LICENSE.txt` file in the root of your project an
 A big thank you to the people who took the time out of their busy schedules to review and suggest improvements to the first draft of this document (ordered by last name):
 
 - Joel Denning @joeldenning
+- Fran Dios @frandiox
 - Kent C. Dodds @kentcdodds
 - Carlos Filoteo @filoxo
 - Jason Miller @developit
