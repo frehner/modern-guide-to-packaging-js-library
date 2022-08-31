@@ -23,9 +23,19 @@ Finally, this guide is not meant to be specific to any particular bundler - ther
 
 Without getting into the flame wars that generally happen around `esm` and `cjs` formats, `esm` is considered "the future" but `cjs` still has a strong hold on the community and ecosystem. `esm` is easier for bundlers to correctly treeshake, so it is especially important for libraries to have this format. It's also possible that some day in the future your library only needs to output to `esm`.
 
-You may have noticed that `umd` is already compatible with CommonJS module loaders - it's up to you if you want to have both a specific `cjs` _and_ `umd` output. In some cases, there's no need to; in other cases, it can be nice to have a pure `cjs` output that keeps the file and folder structure of your source code, and a `umd` output to a single file so it can be easily `<script>`-tagged.
+You may have noticed that `umd` is already compatible with CommonJS module loaders - so why would you want to have both `cjs` _and_ `umd` output? One reason is that CommonJS files generally perform better when _conditionally_ depended on compared to `umd` files; for example:
 
-Finally, if your library is stateful, be aware that this does open the possibility of your library running into the [dual package hazard](https://nodejs.org/api/packages.html#dual-package-hazard), which can occur in situations where a developer ends up with both a `cjs` and `esm` version of your library in their application. The "dual package hazard" article describes some ways to mitigate this issue, and the `module` condition in [`package.json#exports`](#define-your-exports) can also help prevent this from happening.
+```js
+if (process.env.NODE_ENV === "production") {
+  module.exports = require("my-lib.production.js");
+} else {
+  module.exports = require("my-lib.development.js");
+}
+```
+
+The above example, when used with CommonJS modules, will only end up with either the `production` or `development` bundle. However, with a UMD module, it may be the case that a developer would end up with _both_ bundles. Refer to [this discussion](https://github.com/frehner/modern-guide-to-packaging-js-library/issues/9) for more information.
+
+Finally, if your library is stateful, be aware that this does open the possibility of your library running into the [dual package hazard](https://nodejs.org/api/packages.html#dual-package-hazard), which can occur in situations where a developer ends up with both a `cjs` and `esm` version of your library in their application. The "dual package hazard" article linked above describes some ways to mitigate this issue, and the `module` condition in [`package.json#exports`](#define-your-exports) can also help prevent this from happening.
 
 </details>
 
@@ -36,18 +46,22 @@ Finally, if your library is stateful, be aware that this does open the possibili
 
 If you use a bundler or transpilier in your library, it can be configured to output files in the same way that they were authored. This makes it easier to mark specific files as having [side effects](#set-the-sideeffects-field), which helps the developer's bundler with treeshaking. Refer to [this article](https://levelup.gitconnected.com/code-splitting-for-libraries-bundling-for-npm-with-rollup-1-0-2522c7437697) for more details.
 
-An exception is if you are making a bundle meant to be used directly in the browser without _any_ bundler (commonly, these are `umd` bundles but could also be modern `esm` bundles as well). In this case, it is better to have the browser request a single large file than need to request multiple smaller ones. Additionally, you should [minify](#dont-minify) the bundle and create [sourcemaps](#create-sourcemaps) for it.
+An exception is if you are making a bundle meant to be used directly in the browser without _any_ bundler (commonly, these are `umd` bundles but could also be modern `esm` bundles as well). In this case, it is better to have the browser request a single large file than need to request multiple smaller ones. Additionally, you should [minify](#to-minify-or-not-to-minify) the bundle and create [sourcemaps](#create-sourcemaps) for it.
 
 </details>
 
-## Don't minify
+## To Minify or Not to Minify
 
 <details>
-<summary>Let developers minify your library on their own</summary>
+<summary>Determine your preferred level of minification</summary>
 
-If you use a bundler or transpilier for your library, configure it so that your output is not minified. Minification of your library makes it harder on the developer's bundler to treeshake, and the developer's bundler will minify your library as well. Refer to [this article](https://levelup.gitconnected.com/code-splitting-for-libraries-bundling-for-npm-with-rollup-1-0-2522c7437697) for more details.
+There are certain levels of minification you can apply to your library, and depending on how aggressive you want to be will determine how small your code will be once it's finally through a developer's bundler.
 
-An exception is if you are creating a bundle intended to be used directly in the browser without _any_ bundler (commonly, these are `umd` bundles but could also be modern `esm` bundles as well). In this case, you should minify your bundle and create [sourcemaps](#create-sourcemaps) for it, and will likely want it to be a [single file](#output-to-multiple-files).
+For example, most bundlers are already configured to remove whitespace and other easy optimizations, even from an NPM module (in this case, your library). According to [Terser](https://github.com/terser/terser#terser-fast-minify-mode) - a popular JavaScript mangler/compressor - that alone will reduce size by around 95%. In some cases, you may be happy with those savings with no effort on your part.
+
+However, there are additional savings that can occur if you were to run a minifier on your library before publishing. In Terser's linked example above, `d3.js` reduces in size by an additional 3.7% (raw) and 2.4% (gzip) by running the with `compress=true` command versus `compress=false`. This type of compression is generally _not_ run by bundlers/minifiers on NPM modules / packages, and therefore you will miss out on those savings unless you do it yourself. Refer to [this issue](https://github.com/frehner/modern-guide-to-packaging-js-library/issues/9) for additional information.
+
+Finally, if you are creating a bundle intended to be used directly in the browser without a bundler (commonly, these are `umd` bundles but could also be modern `esm` bundles as well), you should always minify your bundle, create [sourcemaps](#create-sourcemaps) for it, and output to a [single file](#output-to-multiple-files).
 
 </details>
 
@@ -98,7 +112,12 @@ You should also add that framework to your library's `package.json`'s [peer depe
 - Enable developers to support older browsers when using your library
 - Output multiple bundles that support various levels of browser support
 
-As one example, if you're transpiling from TypeScript, you should set `"target"` in your `tsconfig.json` to `ESNext`.
+As one example, if you're transpiling from TypeScript, you could create two versions of your package's code:
+
+1. An `esm` version with modern JavaScript generated by setting `target` in your `tsconfig.json` to `ESNext`
+2. A `umd` version with more broadly-compatible JavaScript generated by setting `target` in your `tsconfig.json` to `ES5`
+
+With these settings, most users will get the modern code, but those using older bundler configurations or loading the code using a `<script>` tag will get the version with additional transpilation for older browser support.
 
 </details>
 
@@ -159,7 +178,7 @@ You should also keep track of your changes in a [changelog](#keep-a-changelog).
 <details>
 <summary><code>exports</code> define the public API for your library</summary>
 
-The `exports` field on `package.json` - sometimes called "export maps" - is an incredibly useful addition, though it does add some complexity. The two most important things that it does is:
+The `exports` field on `package.json` - sometimes called "package exports" - is an incredibly useful addition, though it does add some complexity. The two most important things that it does is:
 
 1. Defines what can and cannot be imported from your library, and what the name of it is. If it's not listed in `exports`, then developers cannot `import`/`require` it. In other words, it acts like a public API for users of your library and helps define what is public and what is internal.
 2. Allows you to change which file is imported based on conditions (that you can define), such as "Was the file `import`ed or `require`d? Does the developer want a `development` or `production` version of my library?" etc.
@@ -171,11 +190,10 @@ There are some good docs from the [NodeJS team](https://nodejs.org/api/packages.
   "exports": {
     ".": {
       "types": "index.d.ts",
-      "script": "index.umd.js",
+      "browser": "index.umd.js",
       "module": "index.js",
       "import": "index.js",
-      "require": "index.cjs",
-      "default": "index.js"
+      "require": "index.cjs"
     },
     "./package.json": "./package.json"
   }
@@ -187,15 +205,14 @@ Let us dive into the meaning of these fields and why I chose this specific shape
 - `"."` indicates the default entry for your package
 - The resolution happens from **top to bottom** and stops as soon as a matching field is found; the order of entries is very important
 - The `types` field should always come first, and helps TypeScript find the types file
-- The `script` field should point to your `umd` bundle that can be placed directly in a `<script>` tag
-- The `module` field is an "unofficial" field that is supported by bundlers like Webpack and Rollup. It should come before `import` and `require`, and point to an `esm`-only bundle -- which can be the same as your original `esm` bundle if it's purely `esm`. For a deeper dive and the reasoning behind this decision, you can read more [here](https://github.com/webpack/webpack/issues/11014#issuecomment-641550630), [here](https://github.com/webpack/webpack/issues/11014#issuecomment-643256943), and [here](https://github.com/rollup/plugins/pull/540#issuecomment-692078443).
+- The `browser` field should point to your `umd` bundle that can be placed directly in a `<script>` tag
+- The `module` field is an "unofficial" field that is supported by bundlers like Webpack and Rollup. It should come before `import` and `require`, and point to an `esm`-only bundle -- which can be the same as your original `esm` bundle if it's purely `esm`. As noted in the [formats section](#output-to-esm-cjs-and-umd-formats), it is meant to help bundlers only include one copy of your library, no matter if it was `import`ed or `require`ed. For a deeper dive and the reasoning behind this decision, you can read more [here](https://github.com/webpack/webpack/issues/11014#issuecomment-641550630), [here](https://github.com/webpack/webpack/issues/11014#issuecomment-643256943), and [here](https://github.com/rollup/plugins/pull/540#issuecomment-692078443).
 - The `import` field is for when someone `import`s your library
 - The `require` field is for when someone `require`s your library
-- `default` should always be last, and is meant as a fallback if nothing else matches
 
 If a bundler or environment understands the `exports` field, then the `package.json`'s top-level [main](#set-the-main-field), [types](#set-the-types-field), [module](#set-the-module-field), and [browser](#set-the-browser-field) fields are ignored, as `exports` supersedes those fields. However, it's still importantant to set those fields, for tools or runtimes that do not yet understand the `exports` field.
 
-If you have a "development" and a "production" bundle (for example, you have warnings in the development bundle that don't exist in the production bundle), then you can also set them in the `exports` field with `"development"` and `"production"`. `webpack` will recognize these conditions automatically, and Rollup [can be configured](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions) to recognize them as well.
+If you have a "development" and a "production" bundle (for example, you have warnings in the development bundle that don't exist in the production bundle), then you can also set them in the `exports` field with `"development"` and `"production"`. `webpack` will recognize these conditions automatically; however, while Rollup [can be configured](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions) to recognize them, that is something that you would have to instruct developers to do in their own bundler config.
 
 </details>
 
@@ -346,7 +363,9 @@ Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-fil
 
 `browser` is a fallback for bundlers or runtimes that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `browser` is not used.
 
-`browser` should point to the `umd` bundle; it should probably match the same file as your package export's `script` field.
+`browser` should point to the `umd` bundle; it should probably match the same file as your package export's `browser` field.
+
+Additionally, there are certain CDNs that should be duplicates of this field; for example, you can set `"unpkg"` and `"jsdelivr"` to configure those CDNs to point to the same bundle as `browser`.
 
 </details>
 
