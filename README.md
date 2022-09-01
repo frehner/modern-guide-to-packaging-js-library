@@ -212,7 +212,7 @@ Let us dive into the meaning of these fields and why I chose this specific shape
 
 If a bundler or environment understands the `exports` field, then the `package.json`'s top-level [main](#set-the-main-field), [types](#set-the-types-field), [module](#set-the-module-field), and [browser](#set-the-browser-field) fields are ignored, as `exports` supersedes those fields. However, it's still importantant to set those fields, for tools or runtimes that do not yet understand the `exports` field.
 
-If you have a "development" and a "production" bundle (for example, you have warnings in the development bundle that don't exist in the production bundle), then you can also set them in the `exports` field with `"development"` and `"production"`. `webpack` and `vite` will recognize these conditions automatically; however, while Rollup [can be configured](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions) to recognize them, that is something that you would have to instruct developers to do in their own bundler config.
+If you have a "development" and a "production" bundle (for example, you have warnings in the development bundle that don't exist in the production bundle), then you can also set them in the `exports` field with `"development"` and `"production"`. Note that some bundlers like `webpack` and `vite` will recognize these conditions automatically; however, while Rollup [can be configured](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions) to recognize them, that is something that you would have to instruct developers to do in their own bundler config.
 
 </details>
 
