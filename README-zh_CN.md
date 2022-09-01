@@ -4,7 +4,7 @@
 
 这个指南的写作目的在于提出一些大多数库都应该遵循的建议，同时也提供额外的信息，帮助你了解这些建议被提出的原因，或帮助你判断是否不需要遵循某些建议。这个指南仅适用于 **库（libraries）**，不适用于应用。
 
-要强调的是，这只是一些 **建议**，并不是所有库都必须要遵循的。每个库都是独特的，可能有明确的理由选择让库不实现任何给出的建议。
+要强调的是，这只是一些 **建议**，并不是所有库都必须要遵循的。每个库都是独特的，可能有充足的理由选择让库不采用任何给出的建议。
 
 最后，这个指南包含任何打包工具的特性 —— 已经有许多指南来说明如何在配置特定的打包工具。相反我们聚焦于每个库和打包工具都适用的事项。
 
@@ -23,7 +23,7 @@
 
 你可能已经注意到，`umd` 兼容 CommonJS 模块加载器 —— 是否要同时指定 `cjs` 和 `umd` 完全取决于你。在某些情况下，这没有必要。但有些情况下，最好有一个保持源代码的文件和目录结构的纯 `cjs` 输出，和一个输出到单个文件的 `umd`，这样就可以轻松地将其用于 `<script>` 标签。
 
-Finally, if your library is stateful, be aware that this does open the possibility of your library running into the [dual package hazard](https://nodejs.org/api/packages.html#dual-package-hazard), which can occur in situations where a developer ends up with both a `cjs` and `esm` version of your library in their application. The "dual package hazard" article describes some ways to mitigate this issue, and the `module` condition in [`package.json#exports`](#define-your-exports) can also help prevent this from happening.
+最后还需要注意是，在开发人员在其应用中同时使用 `cjs` 和 `esm` 格式的情况下，可能会发生双包危险。[dual package hazard](https://nodejs.org/api/packages.html#dual-package-hazard) 一文介绍了一些缓解该问题的方法，[`package.json#exports`](#define-your-exports) 中的条件导出也可以帮助防止这种情况的发生。
 
 </details>
 
