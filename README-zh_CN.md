@@ -192,16 +192,17 @@
 
 </details>
 
-### 列出要发布的`files`
+### 列出要发布的 `files`
 
 <details>
-<summary><code>files</code> 定义 NPM 包中包含哪些文件</summary>
+<summary><code>files</code> 定义你的 NPM 包中要包含哪些文件</summary>
 
-The [`files`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#files) field indicates to the `npm` CLI which files and folders to include when you package your library to be put on NPM's package registry.
+[`files`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#files) 决定 `npm` CLI 在打包库时哪些文件和目录包含到最终的 NPM 包中。
 
-For example, if you transform your code from TypeScript into JavaScript, you probably don't want to include the TypeScript source code in your NPM package. (Instead, you should include [sourcemaps](#create-sourcemaps))
 
-Files can take an array of strings (and those strings can include glob-like syntax if needed), so generally it will look like:
+例如，如果你将代码从 TypeScript 编译为 JavaScript，你可能就不想在 NPM 包中包含 TypeScript 的源代码。（相反，你应该包含 [sourcemaps](#create-sourcemaps)）。
+
+`files` 可以接受一个字符串数组（如果需要，这些字符串可以包含类似 glob 的语法），例如：
 
 ```json
 {
@@ -209,28 +210,29 @@ Files can take an array of strings (and those strings can include glob-like synt
 }
 ```
 
-Be aware that the files array doesn't accept a relative specifier; writing `"files": ["./dist"]` will not work as expected.
+注意，文件数组不接受相对路径表示；`"files": ["./dist"]` 将无法正常工作。
 
-One great way to verify you have set the files field up correctly is by running [`npm publish --dry-run`](https://docs.npmjs.com/cli/v8/commands/npm-publish#dry-run), which will list off the files that will be included based on this setting.
+验证你已正确设置 `files` 的一种好方法是运行 [`npm publish --dry-run`](https://docs.npmjs.com/cli/v8/commands/npm-publish#dry-run），它将根据此设置列出将会包含的文件。
 
 </details>
 
-### Set the default module `type` for your JS files
+### 为你的 JS 文件设置默认的模块 `type`
 
 <details>
-<summary><code>type</code> dictates which module system your <code>.js</code> files use</summary>
+<summary><code>type</code> 规定你的 <code>.js</code> 文件使用哪个模块系统</summary>
 
-With the split the CommonJS and ESM module systems, runtimes and bundlers need a way to determine what type of module system your `.js` files are using. Because CommonJS came first, that is the default - but you can change it by adding `"type": "module"` to your `package.json`, which then means that your `.js` files will be viewed as ESM modules.
+随着 CommonJS 和 ESM 模块系统的拆分，运行时和打包工具需要一种方式来决定对你的 `.js` 文件采用哪种模块系统。因为 CommonJS 首先出现，所以它是默认的 - 但你可以改变它，通过在你的 `package.json` 中添加 `"type": "module"`，这样你的 `.js` 文件将被当作 ESM 模块。
 
-Your options are either `"module"` or `"commonjs"`, and it's highly recommended that you set it to one or the other to explicity declare which one you're using.
+你的选项可以是 `module` 或 `commonjs`，强烈建议你设置其中的一个，显式地声明你正在使用哪一个。
 
-Note that you can have a mix of module types in the project, through a couple of tricks:
+请注意，你可以通过几个技巧在项目中混用模块类型：
 
-- `.mjs` files will _always_ be ESM modules, even if your `package.json` has `"type": "commonjs"` (or nothing for `type`)
-- `.cjs` files will _always_ be CommonJS modules, even if your `package.json` has `"type": "module"`
-- You can add additional `package.json` files that are nested inside of folders; runtimes and bundlers look for the _nearest_ `package.json` and will traverse the folder path upwards until they find it. This means you could have two different folders, both using `.js` files, but each with their own `package.json` set to a different `type` to get both a CommonJS- and ESM-based folder.
+- `.mjs` 文件总是 ESM 模块，即使你的 `package.json` 有 `"type": "commonjs"`（或者没有 `type`）
+- `.cjs` 文件总是 CommonJS 模块，即使你的 `package.json` 有 `"type": "module"`
+- 你可以在子目录下添加其他 `package.json` 文件；运行时和打包工具将向上遍历文件目录，直到寻找到最近的 `package.json`。这意味着你可以有两个不同的文件夹，都使用 `.js` 文件，但每个文件夹都有自己的 `package.json` 并设置为不同的 `type` 以获得基于 CommonJS 和 ESM 的文件夹。
 
-Refer to the excellent NodeJS documentation [here](https://nodejs.org/docs/latest-v18.x/api/packages.html#determining-module-system) and [here](https://nodejs.org/docs/latest-v18.x/api/packages.html#packagejson-and-file-extensions) for more information.
+参考优秀的 NodeJS 文档 [这里](https://nodejs.org/docs/latest-v18.x/api/packages.html#determining-module-system) 和 [这里](https://nodejs.org /docs/latest-v18.x/api/packages.html#packagejson-and-file-extensions）了解更多信息。
+
 
 </details>
 
