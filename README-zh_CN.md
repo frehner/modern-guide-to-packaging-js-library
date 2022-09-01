@@ -64,7 +64,7 @@
 
 </details>
 
-## 处理框架依赖
+## 外置框架
 
 <details>
 <summary>不要将 React、Vue 等框架打包到你的库中</summary>
@@ -234,20 +234,21 @@ Refer to the excellent NodeJS documentation [here](https://nodejs.org/docs/lates
 
 </details>
 
-### List which modules have `sideEffects`
+### 列出 `sideEffects`
 
 <details>
-<summary>Setting the <code>sideEffects</code> field enables tree shaking </summary>
+<summary>设置 <code>sideEffects</code> 来允许 treeshaking </summary>
 
-Much a like creating a [pure function](https://en.wikipedia.org/wiki/Pure_function) can bring benefits, creating a "pure module" enables certain benefits as well; bundlers can do a much better job of tree shaking your library.
+创建一个“纯模块”带来的优点与创建一个[纯函数](https://en.wikipedia.org/wiki/Pure_function)十分类似；打包工具能够对你的库更好的进行 treeshaking。
 
-The way to communicate to bundlers which of your modules are "pure" or not is by setting the `sideEffects` field in `package.json` - without this field, bundlers have to assume that **all** of your modules are impure.
+通过设置 `sideEffects` 让打包工具知道你的模块是否是“纯”的。不设置这个字段，打包工具将不得不假设你**所有**的模块都是有副作用。
 
-`sideEffects` can either be set to `false` to indicate that none of your modules have side effects, or an array of strings to list which files have side effects. For example:
+`sideEffects` 可以设为 `false`，表示没有任何模块具有副作用，也可以设置为字符串数组来列出哪些文件具有副作用。例如：
+
 
 ```jsonc
 {
-  // all modules are "pure"
+  // 所有模块都是“纯”的
   "sideEffects": false
 }
 ```
@@ -256,34 +257,36 @@ or
 
 ```jsonc
 {
-  // all modules are "pure" except "module.js"
+  // 除了 "module.js"，所有模块都是“纯”的
   "sideEffects": ["module.js"]
 }
 ```
 
-So, what make a module "inpure?" Some examples are modifying a global variable, sending an API request, or importing CSS, without the developer doing anything to invoke that action. For example:
+所以，什么让一个模块具有副作用？例如修改一个全局变量，发送 API 请求，或导出 CSS，而且开发人员不需要做任何事情这些动作就会被执行。例如：
 
 ```js
-// a module with side effects
+// 具有副作用的模块
 
 export const myVar = "hello";
 
 window.example = "testing";
 ```
 
-By importing `myVar`, your module sets `window.example` automatically! For example:
+导入 `myVar` 时，你的模块自动设置  `window.example`。
+
+例如：
 
 ```js
 import { myVar } from "library";
 
 console.log(window.example);
-// logs "testing"
+// 打印 "testing"
 ```
 
-In some cases, like polyfills, that behavior is intentional. However, if we wanted to make this module "pure", we could move the assignment to `window.example` into a function. For example:
+在某些情况下，如 polyfill，这种行为是有意的。然而，如果我们想让这个模块是“纯”的，我们可以将对 `window.example` 的赋值移动到一个函数中。例如：
 
 ```js
-// a "pure module"
+// 一个“纯”模块
 
 export const myVar = "hello";
 
@@ -292,74 +295,75 @@ export function setExample() {
 }
 ```
 
-This is now a "pure module." Also note the difference in how things look on the developer's side of things:
+现在这是一个“纯”模块。注意，从开发者的角度来看会有不同：
 
 ```js
 import { myVar, setExample } from "library";
 
 console.log(window.example);
-// logs "undefined"
+// 打印 "undefined"
 
 setExample();
 
 console.log(window.example);
-// logs "testing"
+// 打印 "testing"
 ```
 
-Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-file-as-side-effect-free) for more details.
+通过[这篇文章](https://webpack.js.org/guides/tree-shaking/#mark-the-file-as-side-effect-free)来了解更多。
 
 </details>
 
-### Set the `main` field
+### 设置 `main`
 
 <details>
-<summary><code>main</code> defines the CommonJS entry </summary>
+<summary><code>main</code> 定义 CommonJS 入口 </summary>
 
-`main` is a fallback for bundlers or runtimes that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `main` is not used.
+`main` 是一个当打包工具或运行时不支持 [`package.json#exports`](#define-your-exports) 时的兜底方案；如果打包工具或运行时支持条件导出，则不会使用 `main`。
 
-`main` should point to a CommonJS-compatible bundle; it should probably match the same file as your package export's `require` field.
+`main` 应该指向一个兼容 CommonJS 格式的产出；它应该与条件导出中的 `require` 保持一致。
 
 </details>
 
-### Set the `module` field
+### 设置 `module`
 
 <details>
-<summary><code>module</code> defines the ESM entry</summary>
+<summary><code>module</code> 定义 ESM 入口</summary>
 
-`module` is a fallback for bundlers or runtimes that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `module` is not used.
+`module` 是一个当打包工具或运行时不支持 [`package.json#exports`](#define-your-exports) 时的兜底方案；如果打包工具或运行时支持条件导出，则不会使用 `module`。
 
-`module` should point to a ESM-compatible bundle; it should probably match the same file as your package export's `module` and/or `import` field.
+`module` 应该指向一个兼容 ESM 格式的产出；它应该与条件导出中的 `module` 或 `import` 保持一致。
 
 </details>
 
-### Set the `browser` field
+### 设置 `browser`
 
 <details>
-<summary><code>browser</code> defines the script-taggable bundle </summary>
+<summary><code>browser</code> 定义用于 script 标签的产出 </summary>
 
-`browser` is a fallback for bundlers or runtimes that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `browser` is not used.
+`browser` 是一个当打包工具或运行时不支持 [`package.json#exports`](#define-your-exports) 时的兜底方案；如果打包工具或运行时支持条件导出， 则不会使用 `browser`。
 
-`browser` should point to the `umd` bundle; it should probably match the same file as your package export's `script` field.
+`browser` 应该指向 `umd` 格式的产出；它应该与条件导出中的 `script` 文件保持一致。
 
 </details>
 
-### Set the `types` field
+### 设置 `types`
 
 <details>
-<summary><code>types</code> defines the TypeScript types </summary>
+<summary><code>types</code> 定义 TypeScript 类型 </summary>
 
-`types` is a fallback for bundlers or runtimes that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `types` is not used.
+`types` 是一个当打包工具或运行时不支持 [`package.json#exports`](#define-your-exports) 时的兜底方案； 如果打包工具或运行时支持条件导出，则不会使用 `types`。
 
-`types` should point to your TypeScript entry file, such as `index.d.ts`; it should probably match the same file as your package export's `types` field.
+`types` 应该指向你的 TypeScript 入口文件，例如 `index.d.ts`；它应该与条件导出中的 `types` 文件保持一致。
 
 </details>
 
-### List your `peerDependencies`
+### 列出 `peerDependencies`
 
 <details>
-<summary>If you rely on another framework or library, set it as a peer dependency</summary>
+<summary>如果你依赖其他的框架或库，将它设置为 peer dependency</summary>
 
-You should [externalize any frameworks](#externalize-frameworks) you rely on. However, in doing so, your library will only work if the developer installs the framework you need on their own. One way to help them know that they need to install the framework is by setting `peerDependencies` - for example, if you were building a React library, it would potentially look like this:
+你应该[外置框架](#externalize-frameworks)。然而，这样做后，开发者为了让你的库正常工作，需要自行安装你需要的框架。通过设置 `peerDependencies` 让他们知道他们所需要安装的框架。
+- 例如，如果你创建了一个 React 库：
 
 ```json
 {
@@ -370,22 +374,22 @@ You should [externalize any frameworks](#externalize-frameworks) you rely on. Ho
 }
 ```
 
-Refer to [this article](https://nodejs.org/en/blog/npm/peer-dependencies/) for more details.
+通过[这篇文章](https://nodejs.org/en/blog/npm/peer-dependencies/)来了解更多。
 
-You should also document your reliance on these dependencies; for example, `npm v3-v6` does not install peer dependencies, while `npm v7+` will automatically install peer dependencies.
+你应该以书面形式来体现这些依赖；例如，`npm v3-v6` 不安装 peer dependencies，而 `npm v7+` 将自动安装 peer dependencies。
 
 </details>
 
-### State which `license` your library falls under
+### 明确你的库使用的`许可证`
 
 <details>
-<summary>Protect yourself and other contributors</summary>
+<summary>保护你自己和其他的贡献者</summary>
 
-> An open source license protects contributors and users. Businesses and savvy developers won’t touch a project without this protection.
+> 开源许可证用于保护贡献者和用户。没有这种保护，企业和有经验的开发人员不会使用该项目。
 
-That quote comes from [Choose a License](https://choosealicense.com/), which is also a great resource for deciding which license is right for your project.
+上述引用来自[选择许可证](https://choosealicense.com/)，这也是一篇很好的文章，来帮助你决定哪个许可证适合你的项目。
 
-Once you have decided on a license, the [npm Docs for the license](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#license) describe the format that the license field takes. An example:
+当你决定了许可证，[关于许可证的 npm 文档](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#license)中描述了许可证字段的格式。例如：
 
 ```json
 {
@@ -393,15 +397,15 @@ Once you have decided on a license, the [npm Docs for the license](https://docs.
 }
 ```
 
-Additionally, you can create a `LICENSE.txt` file in the root of your project and copy the license text there.
+除此之外，你可以在你的项目根目录下创建一个 `LICENSE.txt` 文件，并将许可证的文本复制到这里。
 
 </details>
 
 ---
 
-## Special Thanks
+## 致谢
 
-A big thank you to the people who took the time out of their busy schedules to review and suggest improvements to the first draft of this document (ordered by last name):
+十分感谢抽出时间对这个文档的初稿进行审查并给出修改意见的人（按姓氏排序)：
 
 - Joel Denning @joeldenning
 - Fran Dios @frandiox
