@@ -112,11 +112,11 @@ Finally, if your library is stateful, be aware that this does open the possibili
 
 </details>
 
-# `package.json` 设置
+## `package.json` 设置
 
 `package.json`中有很多重要的设置和字段值的讨论；这里将着重讨论一些比较重要的，但是还有很多你可以通过[additional fields](https://docs.npmjs.com/cli/v8/configuring-npm/package-json)去了解。
 
-## 设置`name`字段
+### 设置`name`字段
 
 <details>
 <summary>给你的library取一个名字</summary>
@@ -129,7 +129,7 @@ Finally, if your library is stateful, be aware that this does open the possibili
 
 </details>
 
-## 设置`version`字段
+### 设置`version`字段
 
 <details>
 <summary>通过更改version去更新你的library</summary>
@@ -139,6 +139,6 @@ Finally, if your library is stateful, be aware that this does open the possibili
 
 建议使用[semver](https://semver.org/)版本策略，但要注意的是有些library选择[calver](https://calver.org/)策略或者使用他们自己制定的版本策略。无论您选择使用哪种策略，都应该记录下来，以便开发人员了解您的库的版本控制是如何工作的。
 
-您还应该在[changelog](#维护 changelog)中记录您的更改。
+您还应该在[changelog](#维护-changelog)中记录您的更改。
 
 </details>
