@@ -365,7 +365,7 @@ Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-fil
 
 `browser` should point to the `umd` bundle; it should probably match the same file as your package export's `browser` field.
 
-Additionally, there are certain CDNs that should be duplicates of this field; for example, you can set `"unpkg"` and `"jsdelivr"` to configure those CDNs to point to the same bundle as `browser`.
+Additionally, there are certain CDN settings that can be duplicates of this field; for example, you can set `"unpkg"` and `"jsdelivr"` to configure those CDNs to point to the same bundle as `browser` if they aren't automatically picking up the `browser` field.
 
 </details>
 
