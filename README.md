@@ -57,7 +57,7 @@ An exception is if you are making a bundle meant to be used directly in the brow
 
 There are certain levels of minification you can apply to your library, and depending on how aggressive you want to be will determine how small your code will be once it's finally through a developer's bundler.
 
-For example, most bundlers are already configured to remove whitespace and other easy optimizations, even from an NPM module (in this case, your library). According to [Terser](https://github.com/terser/terser#terser-fast-minify-mode) - a popular JavaScript mangler/compressor - that alone will reduce size by around 95%. In some cases, you may be happy with those savings with no effort on your part.
+For example, most bundlers are already configured to remove whitespace and other easy optimizations, even from an NPM module (in this case, your library). According to [Terser](https://github.com/terser/terser#terser-fast-minify-mode) - a popular JavaScript mangler/compressor - that type of compression can reduce your bundle's final size by up to 95%. In some cases, you may be happy with those savings with no effort on your part.
 
 However, there are additional savings that can occur if you were to run a minifier on your library before publishing, but requires understainding the settings and side-effects of your minifer. These type of compressions are generally _not_ run by minifiers on NPM modules, and therefore you will miss out on those savings unless you do it yourself. Refer to [this issue](https://github.com/frehner/modern-guide-to-packaging-js-library/issues/9) for additional information.
 
