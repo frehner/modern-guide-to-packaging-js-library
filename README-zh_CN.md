@@ -112,4 +112,33 @@ Finally, if your library is stateful, be aware that this does open the possibili
 
 </details>
 
-## `package.json` 设置
+# `package.json` 设置
+
+`package.json`中有很多重要的设置和字段值的讨论；这里将着重讨论一些比较重要的，但是还有很多你可以通过[additional fields](https://docs.npmjs.com/cli/v8/configuring-npm/package-json)去了解。
+
+## 设置`name`字段
+
+<details>
+<summary>给你的library取一个名字</summary>
+
+`name`字段是用来表明你的包在`npm`上的名字，开发者可以通过这个名字去安装并使用你的代码。
+
+怎样给代码库命名是有一些规范限制的，如果你的代码库属于某个组织，你还可以创建一个scope。更多细节可以参考[name docs on npm](https://docs.npmjs.com/cli/v8/configuring-npm/)。
+
+`name`和[version](#设置`version`字段)字段在代码库每次迭代的过程中共同形成一个独一无二的标志。
+
+</details>
+
+## 设置`version`字段
+
+<details>
+<summary>通过更改version去更新你的library</summary>
+
+正如[name](#设置`name`字段)部分所说，`name`和`version`共同为您的library在npm上创建一个唯一标识。当您对库中的代码进行更新时，您可以更新`version`字段并发布以允许开发人员获取该新代码。
+
+
+建议使用[semver](https://semver.org/)版本策略，但要注意的是有些library选择[calver](https://calver.org/)策略或者使用他们自己制定的版本策略。无论您选择使用哪种策略，都应该记录下来，以便开发人员了解您的库的版本控制是如何工作的。
+
+您还应该在[changelog](#维护 changelog)中记录您的更改。
+
+</details>
