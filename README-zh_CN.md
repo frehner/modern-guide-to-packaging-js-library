@@ -97,8 +97,8 @@
 
 [这篇 web.dev 上的文章](https://web.dev/publish-modern-javascript/)提供了一个很好的案例，并提供了关于指导原则：
 
-* 当使用你的库时，允许开发者支持老版本的浏览器。
-* 输出多个产出来支持不同版本的浏览器。
+- 当使用你的库时，允许开发者支持老版本的浏览器。
+- 输出多个产出来支持不同版本的浏览器。
 
 举个例子，如果你使用 TypeScript，你应该在 `tsconfig.json` 中将 `"target"` 设置为 `ESNext`。
 
@@ -113,8 +113,8 @@
 
 例如：
 
-* 你的 TypeScript 代码应该输出为 JavaScript。
-* 你的 React 组件，例如 `<Example />`，应该在输出中使用 `jsx()` 或 `createElement()` 来替换 JSX 语法。
+- 你的 TypeScript 代码应该输出为 JavaScript。
+- 你的 React 组件，例如 `<Example />`，应该在输出中使用 `jsx()` 或 `createElement()` 来替换 JSX 语法。
 
 进行这样的编译时，请确保同时也[创建 sourcemap](#创建-sourcemap)
 
@@ -170,7 +170,7 @@
 
 2. 允许你根据不同的条件（你可以定义）去选择那个文件是被导入的，例如“文件是被 `import` 还是被 `require`？开发人员需要的是 `development` 版本的库还是 `production` 版本等等。
 
-关于这部分的内容[NodeJS团队](https://nodejs.org/api/packages.html#package-entry-points)和[Webpack团队](https://webpack.js.org/guides/package-exports/)提供了一些很优秀的文档。在此我们就列出一个涵盖大部分常用场景的例子：
+关于这部分的内容[NodeJS 团队](https://nodejs.org/api/packages.html#package-entry-points)和[Webpack 团队](https://webpack.js.org/guides/package-exports/)提供了一些很优秀的文档。在此我们就列出一个涵盖大部分常用场景的例子：
 
 ```json
 {
@@ -187,6 +187,7 @@
   }
 }
 ```
+
 </details>
 
 让我们深入了解这些字段的含义以及我选择这个示例的原因：
@@ -212,7 +213,6 @@
 <summary><code>files</code> 定义你的 NPM 包中要包含哪些文件</summary>
 
 [`files`](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#files) 决定 `npm` CLI 在打包库时哪些文件和目录包含到最终的 NPM 包中。
-
 
 例如，如果你将代码从 TypeScript 编译为 JavaScript，你可能就不想在 NPM 包中包含 TypeScript 的源代码。（相反，你应该包含 [sourcemap](#创建-sourcemap)）。
 
@@ -247,7 +247,6 @@
 
 参考优秀的 NodeJS 文档 [这里](https://nodejs.org/docs/latest-v18.x/api/packages.html#determining-module-system) 和 [这里](https://nodejs.org /docs/latest-v18.x/api/packages.html#packagejson-and-file-extensions）了解更多信息。
 
-
 </details>
 
 ### 列出 `sideEffects`
@@ -260,7 +259,6 @@
 通过设置 `sideEffects` 让打包工具知道你的模块是否是“纯”的。不设置这个字段，打包工具将不得不假设你**所有**的模块都是有副作用。
 
 `sideEffects` 可以设为 `false`，表示没有任何模块具有副作用，也可以设置为字符串数组来列出哪些文件具有副作用。例如：
-
 
 ```jsonc
 {
@@ -288,7 +286,7 @@ export const myVar = "hello";
 window.example = "testing";
 ```
 
-导入 `myVar` 时，你的模块自动设置  `window.example`。
+导入 `myVar` 时，你的模块自动设置 `window.example`。
 
 例如：
 
