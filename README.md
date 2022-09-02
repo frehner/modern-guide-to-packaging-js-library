@@ -1,5 +1,7 @@
 # The Modern Guide to Packaging your JavaScript library
 
+English | [简体中文](./README-zh_CN.md)
+
 ## Context about this guide
 
 This guide is written to provide at-a-glance suggestions that most libraries should follow, while also giving additional information if you want to understand why a suggestion is made or if you feel like you need to deviate from these suggestions. This guide is meant for **libraries** and not for applications (apps).
