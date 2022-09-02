@@ -199,8 +199,7 @@ if (process.env.NODE_ENV === "production") {
       "browser": "index.umd.js",
       "module": "index.js",
       "import": "index.js",
-      "require": "index.cjs",
-      "default": "index.js"
+      "require": "index.cjs"
     },
     "./package.json": "./package.json"
   }
@@ -216,11 +215,10 @@ if (process.env.NODE_ENV === "production") {
 - `module` 是一个“非官方”字段，它被 Webpack 和 Rollup 等打包工具所支持。它应该被放在 `import` 和 `require` 之前，并且指向 `esm` 格式的产出 -- 如果你的源代码是纯 `esm` 的，它也可以指向你的源代码。正如在[格式部分](#输出-esmcjs-和-umd-格式)中指出的那样，它旨在帮助打包工具只包含你的库的一个副本，无论它是通过 `import` 还是 `require` 方式引入的。你可以从[这里](https://github.com/webpack/webpack/issues/11014#issuecomment-641550630)、[这里](https://github.com/webpack/webpack/issues/11014#issuecomment-643256943)、还有 [这里](https://github.com/rollup/plugins/pull/540#issuecomment-692078443)了解更多关于 `module` 的内容
 - `import` 用于当有人通过 `import` 使用你的库时
 - `require` 用于当有人通过 `require` 使用你的库时
-- `default` 应该始终放在最后，如果没有其他匹配项，作为兜底方案
 
 当一个打包工具或者运行时支持 `exports` 字段的时候，那么 `package.json` 中的顶级字段 [main](#设置-main-字段)、[types](#设置-types-字段)、[module](#设置-module-字段) 还有 [browser](#设置-browser-字段) 将被忽略，被 `exports` 取代。但是，对于尚不支持 `exports` 字段的工具或运行时来说，设置这些字段仍然很重要。
 
-如果你有一个 "development" 和一个 "production" 的产出（例如，你有一些警告在 development 产出中有但在 production 产出中没有），那么你可以通过在 `exports` 字段中 `"development"` 和 `"production"` 来设置它们。注意一些打包工具例如 `webpack` 和 `vite` 将会自动识别这些导出条件，而 Rollup 也可以通过[配置](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions)来识别它们，你需要提醒开发者在他们自己打包工具的配置中去做这些事。。
+如果你有一个 "development" 和一个 "production" 的产出（例如，你有一些警告在 development 产出中有但在 production 产出中没有），那么你可以通过在 `exports` 字段中 `"development"` 和 `"production"` 来设置它们。注意一些打包工具例如 `webpack` 和 `vite` 将会自动识别这些导出条件，而 Rollup 也可以通过[配置](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions)来识别它们，你需要提醒开发者在他们自己打包工具的配置中去做这些事。
 
 </details>
 
