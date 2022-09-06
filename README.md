@@ -206,7 +206,7 @@ Let us dive into the meaning of these fields and why I chose this specific shape
 
 - `"."` indicates the default entry for your package
 - The resolution happens from **top to bottom** and stops as soon as a matching field is found; the order of entries is very important
-- The `types` field should always come first, and helps TypeScript find the types file
+- The `types` field should always [come first](https://devblogs.microsoft.com/typescript/announcing-typescript-4-7/#package-json-exports-imports-and-self-referencing), and helps TypeScript find the types file
 - The `browser` field should point to your `umd` bundle that can be placed directly in a `<script>` tag
 - The `module` field is an "unofficial" field that is supported by bundlers like Webpack and Rollup. It should come before `import` and `require`, and point to an `esm`-only bundle -- which can be the same as your original `esm` bundle if it's purely `esm`. As noted in the [formats section](#output-to-esm-cjs-and-umd-formats), it is meant to help bundlers only include one copy of your library, no matter if it was `import`ed or `require`ed. For a deeper dive and the reasoning behind this decision, you can read more [here](https://github.com/webpack/webpack/issues/11014#issuecomment-641550630), [here](https://github.com/webpack/webpack/issues/11014#issuecomment-643256943), and [here](https://github.com/rollup/plugins/pull/540#issuecomment-692078443).
 - The `import` field is for when someone `import`s your library
@@ -246,9 +246,9 @@ One great way to verify you have set the files field up correctly is by running 
 <details>
 <summary><code>type</code> dictates which module system your <code>.js</code> files use</summary>
 
-With the split the CommonJS and ESM module systems, runtimes and bundlers need a way to determine what type of module system your `.js` files are using. Because CommonJS came first, that is the default - but you can change it by adding `"type": "module"` to your `package.json`, which then means that your `.js` files will be viewed as ESM modules.
+Runtimes and bundlers need a way to determine what type of module system your `.js` files are using - ESM or CommonJS. Because CommonJS came first, that is the what bundlers will assume by default, but you can control it by adding `"type"` your `package.json`.
 
-Your options are either `"module"` or `"commonjs"`, and it's highly recommended that you set it to one or the other to explicity declare which one you're using.
+Your options are either `"type":"module"` or `"type":"commonjs"`, and though you can leave it blank (to default to CommonJS) it's highly recommended that you set it to one or the other to explicity declare which one you're using.
 
 Note that you can have a mix of module types in the project, through a couple of tricks:
 
