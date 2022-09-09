@@ -116,8 +116,8 @@ if (process.env.NODE_ENV === "production") {
 
 举个例子，如果你使用 TypeScript，你可以创建两个版本的包代码：
 
-1. 通过在 `tsconfig.json` 中设置 `"target"="ESNExt"`，生成一个用现代 JavaScript 的 `esm` 版本
-2. 通过在 `tsconfig.json` 中设置 `"target"="ES5"` 生成一个兼容低版本 JavaScript 的 `umd` 版本
+1. 通过在 `tsconfig.json` 中设置 `"target"="esnext"`，生成一个用现代 JavaScript 的 `esm` 版本
+2. 通过在 `tsconfig.json` 中设置 `"target"="es5"` 生成一个兼容低版本 JavaScript 的 `umd` 版本
 
 有了这些设置，大多数用户将获得现代版本的代码，但那些使用老的打包工具配置或使用 `<script>` 加载代码的用户，将获得进行了额外编译来支持老版本浏览器的版本。
 
