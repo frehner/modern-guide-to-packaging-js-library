@@ -385,7 +385,7 @@ To enable your library to "work by default" on CDNs like [unpkg](https://unpkg.c
 
 If you do need to set this field, here's an [excellent guide](https://github.com/defunctzombie/package-browser-field-spec) on the different ways you can configure it.
 
-Note that the `browser` field ideally doesn't point to a `umd` bundle, as that would make it so that your library isn't treeshaked by bundlers (like Webpack) that prioritize this field over the others like [module](#set-the-module-field) and [main](#set-the-main-field).
+Note that the `browser` field shouldn't point to a `umd` bundle, as that would make it so that your library isn't treeshaked by bundlers (like Webpack) that prioritize this field over the others such as [module](#set-the-module-field) and [main](#set-the-main-field).
 
 </details>
 
