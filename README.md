@@ -192,10 +192,10 @@ There are some good docs from the [NodeJS team](https://nodejs.org/api/packages.
   "exports": {
     ".": {
       "types": "index.d.ts",
-      "browser": "index.umd.js",
       "module": "index.js",
       "import": "index.js",
-      "require": "index.cjs"
+      "require": "index.cjs",
+      "default": "index.js"
     },
     "./package.json": "./package.json"
   }
@@ -207,10 +207,10 @@ Let us dive into the meaning of these fields and why I chose this specific shape
 - `"."` indicates the default entry for your package
 - The resolution happens from **top to bottom** and stops as soon as a matching field is found; the order of entries is very important
 - The `types` field should always [come first](https://devblogs.microsoft.com/typescript/announcing-typescript-4-7/#package-json-exports-imports-and-self-referencing), and helps TypeScript find the types file
-- The `browser` field should point to your `umd` bundle that can be placed directly in a `<script>` tag
 - The `module` field is an "unofficial" field that is supported by bundlers like Webpack and Rollup. It should come before `import` and `require`, and point to an `esm`-only bundle -- which can be the same as your original `esm` bundle if it's purely `esm`. As noted in the [formats section](#output-to-esm-cjs-and-umd-formats), it is meant to help bundlers only include one copy of your library, no matter if it was `import`ed or `require`ed. For a deeper dive and the reasoning behind this decision, you can read more [here](https://github.com/webpack/webpack/issues/11014#issuecomment-641550630), [here](https://github.com/webpack/webpack/issues/11014#issuecomment-643256943), and [here](https://github.com/rollup/plugins/pull/540#issuecomment-692078443).
 - The `import` field is for when someone `import`s your library
 - The `require` field is for when someone `require`s your library
+- The `default` field is used as a fallback for if none of the conditions match. While it may not be used at the moment, it's good to have it for ["unknown future situations"](https://webpack.js.org/guides/package-exports/#common-patterns)
 
 If a bundler or environment understands the `exports` field, then the `package.json`'s top-level [main](#set-the-main-field), [types](#set-the-types-field), [module](#set-the-module-field), and [browser](#set-the-browser-field) fields are ignored, as `exports` supersedes those fields. However, it's still importantant to set those fields, for tools or runtimes that do not yet understand the `exports` field.
 
@@ -358,16 +358,34 @@ Refer to [this article](https://webpack.js.org/guides/tree-shaking/#mark-the-fil
 
 </details>
 
-### Set the `browser` field
+### Set additional fields for CDNs
 
 <details>
-<summary><code>browser</code> defines the script-taggable bundle </summary>
+<summary>Support CDNs like <code>unpkg</code> and <code>jsdelivr</code></summary>
+
+To enable your library to "work by default" on CDNs like [unpkg](https://unpkg.com) and [jsdelivr](https://www.jsdelivr.com), you can set their specific fields to point to your `umd` bundle. For example:
+
+```json
+{
+  "unpkg": "./dist/index.umd.js",
+  "jsdelivr": "./dist/index.umd.js"
+}
+```
+
+</details>
+
+### Consider setting the `browser` field
+
+<details>
+<summary><code>browser</code> points to a bundle that works in the browser</summary>
 
 `browser` is a fallback for bundlers or runtimes that don't yet understand [`package.json#exports`](#define-your-exports); if a bundler/environment does understand package exports, then `browser` is not used.
 
-`browser` should point to the `umd` bundle; it should probably match the same file as your package export's `browser` field.
+`browser` should point to an `esm` bundle that works in the browser. However, you'll only need to set this field if you are creating different bundles for browsers and servers (and/or other non-browser environments). If you're not creating multiple bundles for multiple environments, or if your bundles are "pure JavaScript" / "universal" and can be run in any JavaScript environment, then you don't need to to set the `browser` field.
 
-Additionally, there are certain CDN settings that can be duplicates of this field; for example, you can set `"unpkg"` and `"jsdelivr"` to configure those CDNs to point to the same bundle as `browser` if they aren't automatically picking up the `browser` field.
+If you do need to set this field, here's an [excellent guide](https://github.com/defunctzombie/package-browser-field-spec) on the different ways you can configure it.
+
+Note that the `browser` field shouldn't point to a `umd` bundle, as that would make it so that your library isn't treeshaked by bundlers (like Webpack) that prioritize this field over the others such as [module](#set-the-module-field) and [main](#set-the-main-field).
 
 </details>
 
