@@ -145,6 +145,17 @@ It doesn't matter whether it's through automatic tooling or through manual proce
 
 </details>
 
+### Split out your CSS files
+
+<details>
+<summary>Enable devs to only include the CSS they need</summary>
+
+If you are creating a CSS library (like Bootstrap, Tailwind, etc.), it may be easier to provide a single CSS bundle that includes all the functionality that your library provides. However, even in that situation, your CSS bundle may end up becoming large enough that it affects the performance of the devs' sites. To help prevent that, libraries generally provide methods of generating a CSS bundle that only includes the necessary CSS for what the developer is using (for example, see how [Bootstrap](https://getbootstrap.com/docs/5.2/customize/optimize/) and [Tailwind](https://tailwindcss.com/docs/optimizing-for-production) do it).
+
+If CSS is only a part of what your library exposes (for example, a component library that has default styles), then it is ideal if you separate out your CSS into individual bundles per component that are imported when the corresponding component is used. One example of this is [react-component](https://github.com/react-component/slider#usage).
+
+</details>
+
 ## `package.json` settings
 
 There are a lot of important settings and fields to talk about in `package.json`; I will highlight the most important ones here, but be aware that there are [additional fields](https://docs.npmjs.com/cli/v8/configuring-npm/package-json) that you can set as well.
