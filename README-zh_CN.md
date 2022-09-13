@@ -369,7 +369,7 @@ console.log(window.example);
 <details>
 <summary><code>browser</code> 定义用于 script 标签的产出 </summary>
 
-`browser` 是一个当打包工具或运行时不支持 [`package.json#exports`](#define-your-exports) 时的兜底方案；如果打包工具或运行时支持 package exports， 则不会使用 `browser`。
+`browser` 是一个当打包工具或运行时不支持 [`package.json#exports`](#定义你的-exports) 时的兜底方案；如果打包工具或运行时支持 package exports， 则不会使用 `browser`。
 
 `browser` 应该指向 `umd` 格式的产出；它应该与 package exports 中的 `script` 文字段指向同一个文件。
 
