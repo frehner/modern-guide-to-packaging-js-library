@@ -145,7 +145,7 @@ It doesn't matter whether it's through automatic tooling or through manual proce
 
 </details>
 
-### Split out your CSS files
+## Split out your CSS files
 
 <details>
 <summary>Enable devs to only include the CSS they need</summary>
