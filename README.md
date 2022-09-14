@@ -468,3 +468,4 @@ A big thank you to the people who took the time out of their busy schedules to r
 - Konnor Rogers @paramagicdev
 - Matt Seccafien @cartogram
 - Nate Silva @natessilva
+- Cong-Cong Pan @SyMind

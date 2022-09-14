@@ -474,3 +474,4 @@ console.log(window.example);
 - Konnor Rogers @paramagicdev
 - Matt Seccafien @cartogram
 - Nate Silva @natessilva
+- Cong-Cong Pan @SyMind
