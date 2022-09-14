@@ -148,6 +148,17 @@ if (process.env.NODE_ENV === "production") {
 
 </details>
 
+## 拆分出你的 CSS 文件
+
+<details>
+<summary>让开发者能够按需引入 CSS</summary>
+
+如果你正在创建一个 CSS 库（如 Bootstrap、Tailwind 等），最简单的方式就是提供单一文件，包含库的所有功能。然而，在这种情况下，你的 CSS 产出最终可能会变得很大，影响开发者网站的性能。为了避免这种情况，库通常会提供自定义生成 CSS 产出的功能，让产出中只包含开发者正在使用的必要 CSS（例如，参考 [Bootstrap](https://getbootstrap.com/docs/5.2/customize/optimize/) 和 [Tailwind](https://tailwindcss.com/docs/optimizing-for-production) 是怎么做的）。
+
+如果 CSS 只是你的库的一部分（例如，具有默认样式的组件库），那么最好将 CSS 按组件分离单独构建产出，在使用相应的组件时按需导入。这方面的一个例子是 [react-component](https://github.com/react-component/slider#usage)。
+
+</details>
+
 ## 配置 `package.json`
 
 `package.json` 中有许多重要的配置字段值得讨论；我在这里将着重讨论其中最为重要的一些，这还有很多[额外的字段](https://docs.npmjs.com/cli/v8/configuring-npm/package-json)，你同样可以进行配置。
@@ -189,17 +200,17 @@ if (process.env.NODE_ENV === "production") {
 
 2. 允许你根据不同的条件（你可以定义）去选择那个文件是被导入的，例如“文件是被 `import` 还是被 `require`？开发人员需要的是 `development` 版本的库还是 `production` 版本等等。
 
-关于这部分的内容[NodeJS 团队](https://nodejs.org/api/packages.html#package-entry-points)和[Webpack 团队](https://webpack.js.org/guides/package-exports/)提供了一些很优秀的文档。在此我列出一个涵盖大部分常用场景的例子：
+关于这部分的内容[NodeJS 团队](https://nodejs.org/api/packages.html#package-entry-points)和[Webpack 团队](https://webpack.js.org/guides/package-exports/)提供了一些很优秀的文档。在此我列出一个涵盖大部分常见场景的例子：
 
 ```json
 {
   "exports": {
     ".": {
       "types": "index.d.ts",
-      "browser": "index.umd.js",
       "module": "index.js",
       "import": "index.js",
-      "require": "index.cjs"
+      "require": "index.cjs",
+      "default": "index.js"
     },
     "./package.json": "./package.json"
   }
@@ -210,11 +221,11 @@ if (process.env.NODE_ENV === "production") {
 
 - `"."` 表示你的库的默认入口
 - 解析过程是**从上往下**的，并在找到匹配的字段后立即停止；所以入口的顺序是非常重要的
-- `types` 字段应该始终放在第一位，它用来帮助 TypeScript 找到类型文件
-- `browser` 字段应该指向可以直接在 `<script>` 标签中使用的 `umd` 产出
+- `types` 字段应始终[放在第一位](https://devblogs.microsoft.com/typescript/announcing-typescript-4-7/#package-json-exports-imports-and-self-referencing)，帮助 TypeScript 查找类型文件
 - `module` 是一个“非官方”字段，它被 Webpack 和 Rollup 等打包工具所支持。它应该被放在 `import` 和 `require` 之前，并且指向 `esm` 格式的产出 -- 如果你的源代码是纯 `esm` 的，它也可以指向你的源代码。正如在[格式部分](#输出-esmcjs-和-umd-格式)中指出的那样，它旨在帮助打包工具只包含你的库的一个副本，无论它是通过 `import` 还是 `require` 方式引入的。你可以从[这里](https://github.com/webpack/webpack/issues/11014#issuecomment-641550630)、[这里](https://github.com/webpack/webpack/issues/11014#issuecomment-643256943)、还有 [这里](https://github.com/rollup/plugins/pull/540#issuecomment-692078443)了解更多关于 `module` 的内容
 - `import` 用于当有人通过 `import` 使用你的库时
 - `require` 用于当有人通过 `require` 使用你的库时
+- `default` 字段用于兜底，在没有任何条件匹配时使用。虽然目前可能并不会匹配到它，但为了面对[“未知的未来场景”](https://webpack.js.org/guides/package-exports/#common-patterns)，使用它是好的
 
 当一个打包工具或者运行时支持 `exports` 字段的时候，那么 `package.json` 中的顶级字段 [main](#设置-main-字段)、[types](#设置-types-字段)、[module](#设置-module-字段) 还有 [browser](#设置-browser-字段) 将被忽略，被 `exports` 取代。但是，对于尚不支持 `exports` 字段的工具或运行时来说，设置这些字段仍然很重要。
 
@@ -241,7 +252,7 @@ if (process.env.NODE_ENV === "production") {
 
 注意，文件数组不接受相对路径表示；`"files": ["./dist"]` 将无法正常工作。
 
-验证你已正确设置 `files` 的一种好方法是运行 [`npm publish --dry-run`](https://docs.npmjs.com/cli/v8/commands/npm-publish#dry-run），它将根据此设置列出将会包含的文件。
+验证你已正确设置 `files` 的一种好方法是运行 [`npm publish --dry-run`](https://docs.npmjs.com/cli/v8/commands/npm-publish#dry-run)，它将根据此设置列出将会包含的文件。
 
 </details>
 
@@ -250,9 +261,9 @@ if (process.env.NODE_ENV === "production") {
 <details>
 <summary><code>type</code> 规定你的 <code>.js</code> 文件使用哪个模块系统</summary>
 
-随着 CommonJS 和 ESM 模块系统的拆分，运行时和打包工具需要一种方式来决定对你的 `.js` 文件采用哪种模块系统。因为 CommonJS 首先出现，所以它是默认的 - 但你可以改变它，通过在你的 `package.json` 中添加 `"type": "module"`，这样你的 `.js` 文件将被当作 ESM 模块。
+运行时和打包工具需要一种方法来确定你的 `.js` 文件采用哪种模块系统 —— ESM 还是 CommonJS。因为 CommonJS 首先出现，所以它被打包工具视为默认的 - 但你可以通过在你的 `package.json` 中添加 `"type"` 来控制这种行为。
 
-你的选项可以是 `module` 或 `commonjs`，强烈建议你设置其中的一个，显式地声明你正在使用哪一个。
+你可以选择 `"type":"module"` 或 `"type":"commonjs"`，也可以不添加该字段（默认为 CommonJS），但仍强烈建议你进行设置，显式地声明你正在使用哪一个。
 
 请注意，你可以通过几个技巧在项目中混用模块类型：
 
@@ -260,7 +271,7 @@ if (process.env.NODE_ENV === "production") {
 - `.cjs` 文件总是 CommonJS 模块，即使你的 `package.json` 有 `"type": "module"`
 - 你可以在子目录下添加其他 `package.json` 文件；运行时和打包工具将向上遍历文件目录，直到寻找到最近的 `package.json`。这意味着你可以有两个不同的文件夹，都使用 `.js` 文件，但每个文件夹都有自己的 `package.json` 并设置为不同的 `type` 以获得基于 CommonJS 和 ESM 的文件夹。
 
-参考优秀的 NodeJS 文档 [这里](https://nodejs.org/docs/latest-v18.x/api/packages.html#determining-module-system) 和 [这里](https://nodejs.org /docs/latest-v18.x/api/packages.html#packagejson-and-file-extensions）了解更多信息。
+参考优秀的 NodeJS 文档 [这里](https://nodejs.org/docs/latest-v18.x/api/packages.html#determining-module-system) 和 [这里](https://nodejs.org/docs/latest-v18.x/api/packages.html#packagejson-and-file-extensions) 了解更多信息。
 
 </details>
 
@@ -282,7 +293,7 @@ if (process.env.NODE_ENV === "production") {
 }
 ```
 
-or
+或
 
 ```jsonc
 {
@@ -364,16 +375,34 @@ console.log(window.example);
 
 </details>
 
+### 设置给 CDN 使用的附加字段
+
+<details>
+<summary>支持 CDN，例如 <code>unpkg</code> 和 <code>jsdelivr</code></summary>
+
+为让你的库在 CDN 上“以默认的方式正常工作”，如 [unpkg](https://unpkg.com) 和 [jsdelivr](https://www.jsdelivr.com)，你可以设置它们的特定字段指向你的 `umd` 产出。例如：
+
+```json
+{
+  "unpkg": "./dist/index.umd.js",
+  "jsdelivr": "./dist/index.umd.js"
+}
+```
+
+</details>
+
 ### 设置 `browser` 字段
 
 <details>
-<summary><code>browser</code> 定义用于 script 标签的产出 </summary>
+<summary><code>browser</code> 指向能在浏览器中工作的产出</summary>
 
-`browser` 是一个当打包工具或运行时不支持 [`package.json#exports`](#define-your-exports) 时的兜底方案；如果打包工具或运行时支持 package exports， 则不会使用 `browser`。
+`browser` 是一个当打包工具或运行时不支持 [`package.json#exports`](#定义你的-exports) 时的兜底方案；如果打包工具或运行时支持 package exports， 则不会使用 `browser`。
 
-`browser` 应该指向 `umd` 格式的产出；它应该与 package exports 中的 `script` 文字段指向同一个文件。
+`browser` 应该指向能在浏览器中工作的 `esm` 产出。但是，只有在为浏览器和服务器（等其他非浏览器环境）创建不同的产出时，才需要设置该字段。如果你没有为多个环境创建多个产出，或者你的产出是“纯 JavaScript”或“通用”的，可以在任何 JavaScript 环境中运行，那么你就不需要设置 `browser` 字段。
 
-此外，一些 CDN 的配置可以复用该字段；例如，你可以配置 `"unpkg"` and `"jsdelivr"` 来让 CDN 指向与 `browser` 相同的产出，当它们没有自动获取到 `browser` 字段时。
+如果你确实需要设置该字段，这里有一个[优秀的指南](https://github.com/defunctzombie/package-browser-field-spec)，介绍了配置它的不同方法。
+
+注意，`browser` 字段不应该指向 `umd` 产出，因为那样的话，你的库就不会被打包工具（如 Webpack）进行 treeshaking，这些打包工具会优先考虑这个字段，而不是其他字段，比如 [module](#设置-module-字段) 和 [main](#设置-main-字段)。
 
 </details>
 
@@ -445,3 +474,4 @@ console.log(window.example);
 - Konnor Rogers @paramagicdev
 - Matt Seccafien @cartogram
 - Nate Silva @natessilva
+- Cong-Cong Pan @SyMind
