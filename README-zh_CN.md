@@ -48,7 +48,7 @@ if (process.env.NODE_ENV === "production") {
 
 如果你对你的库使用了打包工具或编译器，可以对其进行配置以保留源文件目录结构。这样可以更容易地对特定文件进行 [side effects](#列出-sideeffects) 标记，有助于开发者的打包工具进行 threeshaking。参考[这篇文章](https://levelup.gitconnected.com/code-splitting-for-libraries-bundling-for-npm-with-rollup-1-0-2522c7437697)了解更多信息。
 
-一个例外是，如果你要创建一个不依赖任何打包工具可以直接在浏览器中使用的产出（通常是 `umd` 格式，但也可能是现代的 `esm` 格式）。在这种情况下，最好让浏览器请求一个大文件，而不是请求多个小文件。此外，你应该进行[代码压缩](#要不要压缩代码)并为其创建 [sourcemap](#创建-sourcemap)。
+一个例外是，如果你要创建一个不依赖任何打包工具可以直接在浏览器中使用的产物（通常是 `umd` 格式，但也可能是现代的 `esm` 格式）。在这种情况下，最好让浏览器请求一个大文件，而不是请求多个小文件。此外，你应该进行[代码压缩](#要不要压缩代码)并为其创建 [sourcemap](#创建-sourcemap)。
 
 </details>
 
@@ -63,7 +63,7 @@ if (process.env.NODE_ENV === "production") {
 
 但如果在发布前对你的库进行代码压缩，这可以得到一些额外的好处，但需要深入了解压缩工具的配置和副作用。压缩工具通常不会将这类压缩用于 NPM 模块，因此，如果你不自己来做的话，你会错过这些节省。请参阅[这个 issue](https://github.com/frehner/modern-guide-to-packaging-js-library/issues/9)了解更多信息。
 
-最后，如果你正创建一个不依赖任何打包工具可以直接在浏览器中使用的产出（通常是 `umd` 格式，但也可以是现代的 `esm` 格式）。在这种情况下，你应该对代码进行压缩，并创建 [sourcemap](#创建-sourcemap)，并输出到一个[单文件](#输出多文件)。
+最后，如果你正创建一个不依赖任何打包工具可以直接在浏览器中使用的产物（通常是 `umd` 格式，但也可以是现代的 `esm` 格式）。在这种情况下，你应该对代码进行压缩，并创建 [sourcemap](#创建-sourcemap)，并输出到一个[单文件](#输出多文件)。
 
 </details>
 
@@ -98,7 +98,7 @@ if (process.env.NODE_ENV === "production") {
 <details>
 <summary>不要将 React、Vue 等框架打包在你的库中</summary>
 
-当构建的库依赖某个框架（例如 React、Vue 等），或是作为另一个库的插件，你可能需要将框架配置到“externals”中。这可以使你的库引用这个框架，但不会将其打包到最终的产出中。这会避免产生一些 bug，并减少库的体积。
+当构建的库依赖某个框架（例如 React、Vue 等），或是作为另一个库的插件，你可能需要将框架配置到“externals”中。这可以使你的库引用这个框架，但不会将其打包到最终的产物中。这会避免产生一些 bug，并减少库的体积。
 
 你应该还需要将框架添加到库的 `package.json` 的 [peer dependencies](#列出-peerdependencies) 中，这将帮助开发者发现你依赖于某个框架。
 
@@ -112,7 +112,7 @@ if (process.env.NODE_ENV === "production") {
 [这篇 web.dev 上的文章](https://web.dev/publish-modern-javascript/)提供了一个很好的案例，并提供了相关的指导原则：
 
 - 当使用你的库时，能够让开发者去支持老版本的浏览器。
-- 输出多个产出来支持不同版本的浏览器。
+- 输出多个产物来支持不同版本的浏览器。
 
 举个例子，如果你使用 TypeScript，你可以创建两个版本的包代码：
 
@@ -153,9 +153,9 @@ if (process.env.NODE_ENV === "production") {
 <details>
 <summary>让开发者能够按需引入 CSS</summary>
 
-如果你正在创建一个 CSS 库（如 Bootstrap、Tailwind 等），最简单的方式就是提供单一文件，包含库的所有功能。然而，在这种情况下，你的 CSS 产出最终可能会变得很大，影响开发者网站的性能。为了避免这种情况，库通常会提供自定义生成 CSS 产出的功能，让产出中只包含开发者正在使用的必要 CSS（例如，参考 [Bootstrap](https://getbootstrap.com/docs/5.2/customize/optimize/) 和 [Tailwind](https://tailwindcss.com/docs/optimizing-for-production) 是怎么做的）。
+如果你正在创建一个 CSS 库（如 Bootstrap、Tailwind 等），最简单的方式就是提供单一文件，包含库的所有功能。然而，在这种情况下，你的 CSS 产物最终可能会变得很大，影响开发者网站的性能。为了避免这种情况，库通常会提供自定义生成 CSS 产物的功能，让产物中只包含开发者正在使用的必要 CSS（例如，参考 [Bootstrap](https://getbootstrap.com/docs/5.2/customize/optimize/) 和 [Tailwind](https://tailwindcss.com/docs/optimizing-for-production) 是怎么做的）。
 
-如果 CSS 只是你的库的一部分（例如，具有默认样式的组件库），那么最好将 CSS 按组件分离单独构建产出，在使用相应的组件时按需导入。这方面的一个例子是 [react-component](https://github.com/react-component/slider#usage)。
+如果 CSS 只是你的库的一部分（例如，具有默认样式的组件库），那么最好将 CSS 按组件分离单独构建产物，在使用相应的组件时按需导入。这方面的一个例子是 [react-component](https://github.com/react-component/slider#usage)。
 
 </details>
 
@@ -222,14 +222,14 @@ if (process.env.NODE_ENV === "production") {
 - `"."` 表示你的库的默认入口
 - 解析过程是**从上往下**的，并在找到匹配的字段后立即停止；所以入口的顺序是非常重要的
 - `types` 字段应始终[放在第一位](https://devblogs.microsoft.com/typescript/announcing-typescript-4-7/#package-json-exports-imports-and-self-referencing)，帮助 TypeScript 查找类型文件
-- `module` 是一个“非官方”字段，它被 Webpack 和 Rollup 等打包工具所支持。它应该被放在 `import` 和 `require` 之前，并且指向 `esm` 格式的产出 -- 如果你的源代码是纯 `esm` 的，它也可以指向你的源代码。正如在[格式部分](#输出-esmcjs-和-umd-格式)中指出的那样，它旨在帮助打包工具只包含你的库的一个副本，无论它是通过 `import` 还是 `require` 方式引入的。你可以从[这里](https://github.com/webpack/webpack/issues/11014#issuecomment-641550630)、[这里](https://github.com/webpack/webpack/issues/11014#issuecomment-643256943)、还有 [这里](https://github.com/rollup/plugins/pull/540#issuecomment-692078443)了解更多关于 `module` 的内容
+- `module` 是一个“非官方”字段，它被 Webpack 和 Rollup 等打包工具所支持。它应该被放在 `import` 和 `require` 之前，并且指向 `esm` 格式的产物 -- 如果你的源代码是纯 `esm` 的，它也可以指向你的源代码。正如在[格式部分](#输出-esmcjs-和-umd-格式)中指出的那样，它旨在帮助打包工具只包含你的库的一个副本，无论它是通过 `import` 还是 `require` 方式引入的。你可以从[这里](https://github.com/webpack/webpack/issues/11014#issuecomment-641550630)、[这里](https://github.com/webpack/webpack/issues/11014#issuecomment-643256943)、还有 [这里](https://github.com/rollup/plugins/pull/540#issuecomment-692078443)了解更多关于 `module` 的内容
 - `import` 用于当有人通过 `import` 使用你的库时
 - `require` 用于当有人通过 `require` 使用你的库时
 - `default` 字段用于兜底，在没有任何条件匹配时使用。虽然目前可能并不会匹配到它，但为了面对[“未知的未来场景”](https://webpack.js.org/guides/package-exports/#common-patterns)，使用它是好的
 
 当一个打包工具或者运行时支持 `exports` 字段的时候，那么 `package.json` 中的顶级字段 [main](#设置-main-字段)、[types](#设置-types-字段)、[module](#设置-module-字段) 还有 [browser](#设置-browser-字段) 将被忽略，被 `exports` 取代。但是，对于尚不支持 `exports` 字段的工具或运行时来说，设置这些字段仍然很重要。
 
-如果你有一个 "development" 和一个 "production" 的产出（例如，你有一些警告在 development 产出中有但在 production 产出中没有），那么你可以通过在 `exports` 字段中 `"development"` 和 `"production"` 来设置它们。注意一些打包工具例如 `webpack` 和 `vite` 将会自动识别这些导出条件，而 Rollup 也可以通过[配置](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions)来识别它们，你需要提醒开发者在他们自己打包工具的配置中去做这些事。
+如果你有一个 "development" 和一个 "production" 的产物（例如，你有一些警告在 development 产物中有但在 production 产物中没有），那么你可以通过在 `exports` 字段中 `"development"` 和 `"production"` 来设置它们。注意一些打包工具例如 `webpack` 和 `vite` 将会自动识别这些导出条件，而 Rollup 也可以通过[配置](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions)来识别它们，你需要提醒开发者在他们自己打包工具的配置中去做这些事。
 
 </details>
 
@@ -360,7 +360,7 @@ console.log(window.example);
 
 `main` 是一个当打包工具或运行时不支持 [`package.json#exports`](#定义你的-exports) 时的兜底方案；如果打包工具或运行时支持 package exports，则不会使用 `main`。
 
-`main` 应该指向一个兼容 CommonJS 格式的产出；它应该与 package exports 中的 `require` 保持一致。
+`main` 应该指向一个兼容 CommonJS 格式的产物；它应该与 package exports 中的 `require` 保持一致。
 
 </details>
 
@@ -371,7 +371,7 @@ console.log(window.example);
 
 `module` 是一个当打包工具或运行时不支持 [`package.json#exports`](#定义你的-exports) 时的兜底方案；如果打包工具或运行时支持 package exports，则不会使用 `module`。
 
-`module` 应该指向一个兼容 ESM 格式的产出；它应该与 package exports 中的 `module` 或 `import` 保持一致。
+`module` 应该指向一个兼容 ESM 格式的产物；它应该与 package exports 中的 `module` 或 `import` 保持一致。
 
 </details>
 
@@ -380,7 +380,7 @@ console.log(window.example);
 <details>
 <summary>支持 CDN，例如 <code>unpkg</code> 和 <code>jsdelivr</code></summary>
 
-为让你的库在 CDN 上“以默认的方式正常工作”，如 [unpkg](https://unpkg.com) 和 [jsdelivr](https://www.jsdelivr.com)，你可以设置它们的特定字段指向你的 `umd` 产出。例如：
+为让你的库在 CDN 上“以默认的方式正常工作”，如 [unpkg](https://unpkg.com) 和 [jsdelivr](https://www.jsdelivr.com)，你可以设置它们的特定字段指向你的 `umd` 产物。例如：
 
 ```json
 {
@@ -394,15 +394,15 @@ console.log(window.example);
 ### 设置 `browser` 字段
 
 <details>
-<summary><code>browser</code> 指向能在浏览器中工作的产出</summary>
+<summary><code>browser</code> 指向能在浏览器中工作的产物</summary>
 
 `browser` 是一个当打包工具或运行时不支持 [`package.json#exports`](#定义你的-exports) 时的兜底方案；如果打包工具或运行时支持 package exports， 则不会使用 `browser`。
 
-`browser` 应该指向能在浏览器中工作的 `esm` 产出。但是，只有在为浏览器和服务器（等其他非浏览器环境）创建不同的产出时，才需要设置该字段。如果你没有为多个环境创建多个产出，或者你的产出是“纯 JavaScript”或“通用”的，可以在任何 JavaScript 环境中运行，那么你就不需要设置 `browser` 字段。
+`browser` 应该指向能在浏览器中工作的 `esm` 产物。但是，只有在为浏览器和服务器（等其他非浏览器环境）创建不同的产物时，才需要设置该字段。如果你没有为多个环境创建多个产物，或者你的产物是“纯 JavaScript”或“通用”的，可以在任何 JavaScript 环境中运行，那么你就不需要设置 `browser` 字段。
 
 如果你确实需要设置该字段，这里有一个[优秀的指南](https://github.com/defunctzombie/package-browser-field-spec)，介绍了配置它的不同方法。
 
-注意，`browser` 字段不应该指向 `umd` 产出，因为那样的话，你的库就不会被打包工具（如 Webpack）进行 treeshaking，这些打包工具会优先考虑这个字段，而不是其他字段，比如 [module](#设置-module-字段) 和 [main](#设置-main-字段)。
+注意，`browser` 字段不应该指向 `umd` 产物，因为那样的话，你的库就不会被打包工具（如 Webpack）进行 treeshaking，这些打包工具会优先考虑这个字段，而不是其他字段，比如 [module](#设置-module-字段) 和 [main](#设置-main-字段)。
 
 </details>
 
