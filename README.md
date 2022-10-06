@@ -298,7 +298,7 @@ or
 }
 ```
 
-So, what make a module "inpure?" Some examples are modifying a global variable, sending an API request, or importing CSS, without the developer doing anything to invoke that action. For example:
+So, what make a module "impure?" Some examples are modifying a global variable, sending an API request, or importing CSS, without the developer doing anything to invoke that action. For example:
 
 ```js
 // a module with side effects
