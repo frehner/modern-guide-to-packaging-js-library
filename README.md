@@ -23,7 +23,7 @@ Finally, this guide is not meant to be specific to any particular bundler - ther
 
 `umd` is short for "Universal Module Definition," and can be run by a raw `<script>` tag, or in CommonJS module loaders, or by `AMD` module loaders.
 
-Without getting into the flame wars that generally happen around `esm` and `cjs` formats, `esm` is considered "the future" but `cjs` still has a strong hold on the community and ecosystem. `esm` is easier for bundlers to correctly treeshake, so it is especially important for libraries to have this format. It's also possible that some day in the future your library only needs to output to `esm`.
+Without getting into the flame wars that generally happen around `esm` and `cjs` formats, `esm` is considered "the future" but `cjs` still has a strong hold on the community and ecosystem. `esm` is easier for bundlers to correctly tree shake, so it is especially important for libraries to have this format. It's also possible that some day in the future your library only needs to output to `esm`.
 
 You may have noticed that `umd` is already compatible with CommonJS module loaders - so why would you want to have both `cjs` _and_ `umd` output? One reason is that CommonJS files generally perform better when _conditionally_ depended on compared to `umd` files; for example:
 
@@ -44,9 +44,9 @@ Finally, if your library is stateful, be aware that this does open the possibili
 ## Output to multiple files
 
 <details>
-<summary>Better treeshaking by maintaining the file structure</summary>
+<summary>Better tree shaking by maintaining the file structure</summary>
 
-If you use a bundler or transpilier in your library, it can be configured to output files in the same way that they were authored. This makes it easier to mark specific files as having [side effects](#set-the-sideeffects-field), which helps the developer's bundler with treeshaking. Refer to [this article](https://levelup.gitconnected.com/code-splitting-for-libraries-bundling-for-npm-with-rollup-1-0-2522c7437697) for more details.
+If you use a bundler or transpilier in your library, it can be configured to output files in the same way that they were authored. This makes it easier to mark specific files as having [side effects](#set-the-sideeffects-field), which helps the developer's bundler with tree shaking. Refer to [this article](https://levelup.gitconnected.com/code-splitting-for-libraries-bundling-for-npm-with-rollup-1-0-2522c7437697) for more details.
 
 An exception is if you are making a bundle meant to be used directly in the browser without _any_ bundler (commonly, these are `umd` bundles but could also be modern `esm` bundles as well). In this case, it is better to have the browser request a single large file than need to request multiple smaller ones. Additionally, you should [minify](#to-minify-or-not-to-minify) the bundle and create [sourcemaps](#create-sourcemaps) for it.
 
@@ -396,7 +396,7 @@ To enable your library to "work by default" on CDNs like [unpkg](https://unpkg.c
 
 If you do need to set this field, here's an [excellent guide](https://github.com/defunctzombie/package-browser-field-spec) on the different ways you can configure it.
 
-Note that the `browser` field shouldn't point to a `umd` bundle, as that would make it so that your library isn't treeshaked by bundlers (like Webpack) that prioritize this field over the others such as [module](#set-the-module-field) and [main](#set-the-main-field).
+Note that the `browser` field shouldn't point to a `umd` bundle, as that would make it so that your library isn't tree shaked by bundlers (like Webpack) that prioritize this field over the others such as [module](#set-the-module-field) and [main](#set-the-main-field).
 
 </details>
 
