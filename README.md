@@ -12,6 +12,16 @@ Finally, this guide is not meant to be specific to any particular bundler - ther
 
 ---
 
+## Tooling
+
+<details>
+<summary>Use tools to validate important settings</summary>
+
+- [publint.dev](https://publint.dev/) validates important settings with your `package.json` and suggests improvements if it finds them
+- [arethetypeswrong](https://arethetypeswrong.github.io) validates that your TypeScript types are output and configured correctly
+
+</details>
+
 ## Output to `esm`, `cjs`, and `umd` formats
 
 <details>
