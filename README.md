@@ -212,14 +212,20 @@ There are some good docs from the [NodeJS team](https://nodejs.org/api/packages.
 {
   "exports": {
     ".": {
-      "types": "index.d.ts",
-      "module": "index.js",
-      "import": "index.js",
-      "require": "index.cjs",
-      "default": "index.js"
+      "module": "./dist/index.mjs",
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "default": "./dist/index.mjs"
     },
     "./package.json": "./package.json"
-  }
+  },
+  "types": "./dist/index.d.ts"
 }
 ```
 
@@ -227,15 +233,16 @@ Let us dive into the meaning of these fields and why I chose this specific shape
 
 - `"."` indicates the default entry for your package
 - The resolution happens from **top to bottom** and stops as soon as a matching field is found; the order of entries is very important
-- The `types` field should always [come first](https://devblogs.microsoft.com/typescript/announcing-typescript-4-7/#package-json-exports-imports-and-self-referencing), and helps TypeScript find the types file
 - The `module` field is an "unofficial" field that is supported by bundlers like Webpack and Rollup. It should come before `import` and `require`, and point to an `esm`-only bundle -- which can be the same as your original `esm` bundle if it's purely `esm`. As noted in the [formats section](#output-to-esm-cjs-and-umd-formats), it is meant to help bundlers only include one copy of your library, no matter if it was `import`ed or `require`ed. For a deeper dive and the reasoning behind this decision, you can read more [here](https://github.com/webpack/webpack/issues/11014#issuecomment-641550630), [here](https://github.com/webpack/webpack/issues/11014#issuecomment-643256943), and [here](https://github.com/rollup/plugins/pull/540#issuecomment-692078443).
-- The `import` field is for when someone `import`s your library
-- The `require` field is for when someone `require`s your library
-- The `default` field is used as a fallback for if none of the conditions match. While it may not be used at the moment, it's good to have it for ["unknown future situations"](https://webpack.js.org/guides/package-exports/#common-patterns)
+- The `import` field is for when someone `import`s your library.
+- The `require` field is for when someone `require`s your library.
+- The `default` field is used as a fallback for if none of the conditions match. While it may not be used at the moment, it's good to have it for ["unknown future situations"](https://webpack.js.org/guides/package-exports/#common-patterns).
 
 If a bundler or environment understands the `exports` field, then the `package.json`'s top-level [main](#set-the-main-field), [types](#set-the-types-field), [module](#set-the-module-field), and [browser](#set-the-browser-field) fields are ignored, as `exports` supersedes those fields. However, it's still important to set those fields, for tools or runtimes that do not yet understand the `exports` field.
 
 If you have a "development" and a "production" bundle (for example, you have warnings in the development bundle that don't exist in the production bundle), then you can also set them in the `exports` field with `"development"` and `"production"`. Note that some bundlers like `webpack` and `vite` will recognize these conditions automatically; however, while Rollup [can be configured](https://github.com/rollup/plugins/tree/master/packages/node-resolve/#exportconditions) to recognize them, that is something that you would have to instruct developers to do in their own bundler config.
+
+(Note that while the "types" field is [covered in a different section](#set-the-types-field), it is included in the above snippet for people who are copy-pasting the example. Even though we have two separate "types" fields inside of the "export" field, the "types" field is also required at the root of the object for full backwards compatibility, as tools like [arethetypeswrong](https://arethetypeswrong.github.io) will fail your package otherwise.)
 
 </details>
 

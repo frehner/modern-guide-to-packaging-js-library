@@ -206,14 +206,20 @@ if (process.env.NODE_ENV === "production") {
 {
   "exports": {
     ".": {
-      "types": "index.d.ts",
-      "module": "index.js",
-      "import": "index.js",
-      "require": "index.cjs",
-      "default": "index.js"
+      "module": "./dist/index.mjs",
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "default": "./dist/index.mjs"
     },
     "./package.json": "./package.json"
-  }
+  },
+  "types": "./dist/index.d.ts"
 }
 ```
 
